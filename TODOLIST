@@ -1,0 +1,21 @@
+// feed. to fix:
+// only show notes from people you're following
+// stop rendering of notes until all info has been fetched. ie: profile pic, name, content etc.
+// if image exists in note, render image appropriately.
+// correctly render linebreaks etc.
+// need to modify this so the npub is not hard coded.
+
+
+
+// only show notes from people you're following
+// steps: 
+// need to know how user is following. search for follow list.
+// then need to filter feed by the list of npubs.
+
+
+// fetchFollowList()
+// hex pubkey currently hardcoded in. store this in state var on login and add dynamic value to function.
+//
+
+// App.tsx
+// problem: if i do not click login button and refresh the app, the pubkey is not stored in state.
