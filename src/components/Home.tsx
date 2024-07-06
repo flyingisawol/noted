@@ -146,7 +146,7 @@ export const Home = ({ defaultRelays }: Props) => {
 
         const signer = new NDKNip07Signer()
         ndk.signer = signer
-        signer.user().then((user) => {
+        await signer.user().then((user) => {
 
             if (!!user.npub) {
                 setUserNpub(user.npub)
@@ -154,7 +154,7 @@ export const Home = ({ defaultRelays }: Props) => {
             }
         })
 
-        const user = ndk.getUser({ pubkey: userHexKey })
+        let user = ndk.getUser({ npub: userNpub })
         user.fetchProfile().then((profile) => {
             setUserProfileData(profile as NDKUserProfile)
             fetchEventsFromSub() // This calls the firehose.
@@ -169,7 +169,7 @@ export const Home = ({ defaultRelays }: Props) => {
             // fetchProfilesFromNotes()
             // console.log(userHexKey, userNpub)
         })
-    }, [])
+    }, [kind1Events])
 
 
 

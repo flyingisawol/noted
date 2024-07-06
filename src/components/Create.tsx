@@ -8,8 +8,12 @@ export const Create = ({ defaultRelays }) => {
     const navigate = useNavigate()
     
     const signer = new NDKNip07Signer()
-    const ndk = new NDK({ explicitRelayUrls: defaultRelays, signer: new NDKNip07Signer })
-
+    const ndk = new NDK({ 
+        autoConnectUserRelays: true,
+        explicitRelayUrls: defaultRelays, 
+        signer: new NDKNip07Signer, 
+        autoFetchUserMutelist: false,  
+    })
 
     // function to capture input, create as NDK event, to sign, and publish.
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

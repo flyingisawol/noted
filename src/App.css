@@ -140,7 +140,7 @@ ul {
 .note {
   display: flex;
   flex-direction: column;
-  margin: 5px 0px 5px 0px;
+  margin: 5px 8px 5px 0px;
   padding: 5px 5px 5px 5px;
   min-height: 120px;
   border: #333333 solid 1px;
@@ -156,12 +156,6 @@ ul {
   min-width: 410px;
   max-width: 410px;
 }
-
-/* @media screen and (max-width: 430px) {
-  .note {
-    width: 96%;
-  } */
-/* } */
 
 .note-content {
   padding: 5px;
@@ -179,7 +173,7 @@ ul {
   max-width: 45px;
   max-height: 45px;
   border-radius: 50% !important;
-  object-fit: cover !important;
+  object-fit: fill !important;
   margin: 0 3px 0 3px;
   padding-left: 5px;
 }
