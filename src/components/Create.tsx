@@ -1,35 +1,35 @@
-import NDK, { NDKEvent, NDKKind, NDKNip07Signer } from '@nostr-dev-kit/ndk'
+import NDK, { NDKNip07Signer, NDKEvent } from '@nostr-dev-kit/ndk'
 import { useState } from 'react'
 import { useNavigate } from "react-router-dom"
 
-export const Create = ({ defaultRelays }) => {
+export const Create = () => {
 
     const [input, setInput ] = useState<string>("")
     const navigate = useNavigate()
     
     const signer = new NDKNip07Signer()
     const ndk = new NDK({ 
-        autoConnectUserRelays: true,
-        explicitRelayUrls: defaultRelays, 
+        explicitRelayUrls: [
+            "wss://umbrel.local:4848",
+            "wss://relay.damus.io", 
+            "wss://nos.lol", 
+            "wss://relay.primal.net"
+        ], 
         signer: new NDKNip07Signer, 
-        autoFetchUserMutelist: false,  
     })
 
-    // function to capture input, create as NDK event, to sign, and publish.
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // figure out why relay not able to receive when publishing note. !!!!
 
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault() // prevents page being refreshed
 
         const newNote = new NDKEvent(ndk)
         newNote.kind = 1
         newNote.content = input
-
-        ndk.connect().then(() => {
-            signer.user().then(async (user) => {
-                if (!!user.npub) {
-                    console.log("Permission granted to read their public key:", user.npub);
-                }
-            })
+        
+        signer.user().then(async (user) => {
+            if (!!user.npub) {
+            }
             newNote.publish()
         })
         navigate("/home")

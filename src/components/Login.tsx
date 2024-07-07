@@ -1,11 +1,11 @@
 
-export const Login = ({ onClick }: any) => {
+export const Login = ({ handleClick }: any) => {
     
     return (
         <>
             <button
             className="login-button"
-            onClick={onClick} 
+            onClick={handleClick} 
             >Login with signer</button>
         </>
     )

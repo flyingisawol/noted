@@ -1,4 +1,4 @@
-import NDK, { NDKEvent, NDKNip07Signer, NDKFilter, NDKUserProfile } from '@nostr-dev-kit/ndk'
+import NDK, { NDKEvent, NDKNip07Signer, NDKFilter, NDKUserProfile, NDKUser } from '@nostr-dev-kit/ndk'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { nip19 } from 'nostr-tools'
 import { Create } from './Create'
@@ -24,24 +24,19 @@ export interface UserProfileData {
 }
 
 interface Props {
+    defaultRelays: Array<string>;
     userNpub: string;
     userHexKey: string;
-    defaultRelays: Array<string>;
 }
 
-export const Home = ({ defaultRelays }: Props) => {
+export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfile }: NDKUserProfile) => {
 
     const [kind1Events, setKind1Events] = useState<Array<NDKEvent>>([])
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Object>({})
     const [userProfileData, setUserProfileData] = useState<NDKUserProfile>({})
-
-    const [userNpub, setUserNpub] = useState<string>('')
-    const [userHexKey, setUserHexKey] = useState<string>('')
-
     const [showEvents, setShowEvents] = useState<Boolean>(true)
     const [fetchingEvents, setFetchingEvents] = useState<Boolean>(false)
-
     const [isScrolling, setIsScrolling] = useState<Boolean>(false);
     const feedContainerRef = useRef<any>(null);
 
@@ -52,7 +47,9 @@ export const Home = ({ defaultRelays }: Props) => {
     })
 
     const fetchEventsFromSub = async () => {
+        console.log('searching for notes')
         const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50 }, { closeOnEose: false })
+        console.log('followList = ', followList)
         await sub.on('event', (event) => {
             setKind1Events((events) => insertEventIntoDescendingList(events, event))
             fetchProfilesFromNotes()
@@ -130,9 +127,13 @@ export const Home = ({ defaultRelays }: Props) => {
         })
     }
 
+    // followList array 
+
+    // remove hardcoded pubkey
     const fetchFollowList = async () => {
+        console.log('pubkeys= ', userNpub, userHexKey)
         const filter: NDKFilter = {
-            kinds: [3], authors: ["3492dd43d496a237f4441fd801f5078b63542c3e158ffea903cb020a1af4ffdd"]
+            kinds: [3], authors: [userHexKey]
         }
         let events = await ndk.fetchEvents(filter)
         const newEventsArray = [...events]
@@ -141,42 +142,17 @@ export const Home = ({ defaultRelays }: Props) => {
         setFollowList(followListKeys)
         fetchEventsFromSub()
     }
-
-    const fetchUserProfile = async () => {
-
-        const signer = new NDKNip07Signer()
-        ndk.signer = signer
-        await signer.user().then((user) => {
-
-            if (!!user.npub) {
-                setUserNpub(user.npub)
-                setUserHexKey(user.pubkey)
-            }
-        })
-
-        let user = ndk.getUser({ npub: userNpub })
-        user.fetchProfile().then((profile) => {
-            setUserProfileData(profile as NDKUserProfile)
-            fetchEventsFromSub() // This calls the firehose.
-        })
-    }
-
+    
     useEffect(() => {
         ndk.connect().then(() => {
-            fetchUserProfile()
-            fetchFollowList()
             // fetchEventsFromSub() // This calls the firehose.
-            // fetchProfilesFromNotes()
-            // console.log(userHexKey, userNpub)
+            fetchFollowList()
         })
-    }, [kind1Events])
-
-
+    }, [])
 
     return (
         <>
-            <Create
-                defaultRelays={defaultRelays} />
+            <Create />
             <div className='notelist'>
                 <NoteList
                     kind1Events={kind1Events}

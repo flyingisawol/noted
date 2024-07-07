@@ -1,15 +1,18 @@
-import { Create } from "./Create";
 import { useNavigate, Link } from "react-router-dom"
 import { Login } from "./Login";
+import { Create } from "./Create";
 
-export const Nav = ({ loggedInUser, defaultRelays }) => {
+interface Props {
+    userNpub: string;
+}
+
+export const Nav = ({ userNpub, }: Props) => {
 
     const navigate = useNavigate()
 
     const onClick = () => {
         return navigate("/")
     }
-
 
     // lets get this displaying profile image once logged in. would this link to profile page?
 
