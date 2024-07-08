@@ -1,12 +1,10 @@
 import { useNavigate, Link } from "react-router-dom"
 import { Login } from "./Login";
 import { Create } from "./Create";
+import { NDKUserProfile } from "@nostr-dev-kit/ndk";
 
-interface Props {
-    userNpub: string;
-}
 
-export const Nav = ({ userNpub, }: Props) => {
+export const Nav = ({ userProfile }) => {
 
     const navigate = useNavigate()
 
@@ -28,8 +26,8 @@ export const Nav = ({ userNpub, }: Props) => {
                         <img src=""  className="logo" alt="" />
                     </li>
                     <li className="nav-right">
-                        <Link to="/profile">
-                            <img className="profile-pic" src="http://rejecttheframe.xyz/AK.png" alt="" />
+                        <Link to="/profile" userProfile={userProfile}>
+                            <img className="profile-pic" src={userProfile.image} alt="" />
                         </Link> 
                     </li>
                 </ul>

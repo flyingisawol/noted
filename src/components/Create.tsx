@@ -41,11 +41,11 @@ export const Create = () => {
     }
 
     return (
-        <>
+        <div className='write-stuff'>
             <form className="input-form" onSubmit={onSubmit} name=''>
                 <textarea className="input-note" placeholder="write stuff..." value={input} onChange={handleChange}></textarea>
             <button className="submit-button">submit</button>
             </form>
-        </>
+        </div>
     )
 }

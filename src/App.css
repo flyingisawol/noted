@@ -47,7 +47,9 @@ ul {
 
 
 .profile-pic {
-  max-width: 40px;
+  min-width: 45px;
+  max-width: 45px;
+  border-radius: 50%;
   margin-right: 20px;
 }
 
@@ -59,20 +61,22 @@ ul {
  
 /* USER INPUT */
 
-.input-form {
+.write-stuff {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  min-width: 100%;
+  background-color: #000000;
+}
+
+.input-form {
   padding: 10px 0px 10px 0px;
   background-color: #000000;
-  
+  min-width: 400px;
+  max-width: 400px;
 }
 
 .input-form .input-note {
-
-  min-width: 400px;
-  max-width: 400px;
+  min-width: 390px;
   min-height: 80px;
   border-radius: 10px;
   background-color: #242424;
@@ -99,9 +103,9 @@ ul {
   font-weight: 500;
 }
 
-.submit-button, .login-butto {
-  min-width: 410px;
-  max-width: 410px;
+.submit-button, .login-button {
+  min-width: 400px;
+  max-width: 400px;
   border-radius: 8px;
   border: 1px solid #333300;
   font-size: 1em;

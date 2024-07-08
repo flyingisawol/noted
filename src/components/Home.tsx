@@ -1,4 +1,4 @@
-import NDK, { NDKEvent, NDKNip07Signer, NDKFilter, NDKUserProfile, NDKUser } from '@nostr-dev-kit/ndk'
+import NDK, { NDKEvent, NDKNip07Signer, NDKFilter, NDKUserProfile } from '@nostr-dev-kit/ndk'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { nip19 } from 'nostr-tools'
 import { Create } from './Create'
@@ -15,26 +15,19 @@ export interface Metadata {
     metadata: Record<string, Metadata>
 }
 
-export interface UserProfileData {
-    name: string;
-    picture: string;
-    nip05: string;
-    about: string;
-    lud16: string;
-}
-
 interface Props {
     defaultRelays: Array<string>;
     userNpub: string;
     userHexKey: string;
+    userProfile: NDKUserProfile
 }
 
 export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfile }: NDKUserProfile) => {
 
     const [kind1Events, setKind1Events] = useState<Array<NDKEvent>>([])
+    const [eventsExist, setEventsExist] = useState(false)
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Object>({})
-    const [userProfileData, setUserProfileData] = useState<NDKUserProfile>({})
     const [showEvents, setShowEvents] = useState<Boolean>(true)
     const [fetchingEvents, setFetchingEvents] = useState<Boolean>(false)
     const [isScrolling, setIsScrolling] = useState<Boolean>(false);
@@ -46,13 +39,15 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfi
         autoFetchUserMutelist: false,
     })
 
-    const fetchEventsFromSub = async () => {
-        console.log('searching for notes')
+    
+
+    const fetchEventsFromSub = () => {
+
         const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50 }, { closeOnEose: false })
-        console.log('followList = ', followList)
-        await sub.on('event', (event) => {
-            setKind1Events((events) => insertEventIntoDescendingList(events, event))
+
+        sub.on('event', (event) => {
             fetchProfilesFromNotes()
+            setKind1Events((events) => insertEventIntoDescendingList(events, event))
         })
         sub.on('eose', () => {
             // console.log('EOSE')
@@ -127,39 +122,39 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfi
         })
     }
 
-    // followList array 
-
-    // remove hardcoded pubkey
+    // seems to be an intermittant issue, where the follow list array remains empty until a refresh (function runs again)?
     const fetchFollowList = async () => {
+        
         console.log('pubkeys= ', userNpub, userHexKey)
+        console.log(userProfile)
+        
         const filter: NDKFilter = {
             kinds: [3], authors: [userHexKey]
         }
+
         let events = await ndk.fetchEvents(filter)
         const newEventsArray = [...events]
         const followListKeys = [] as Array<string>
         newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
         setFollowList(followListKeys)
-        fetchEventsFromSub()
     }
-    
+
     useEffect(() => {
         ndk.connect().then(() => {
-            // fetchEventsFromSub() // This calls the firehose.
             fetchFollowList()
+            fetchEventsFromSub()
+
         })
     }, [])
 
     return (
         <>
             <Create />
-            <div className='notelist'>
                 <NoteList
                     kind1Events={kind1Events}
                     metadata={metadata}
-                    userProfileData={userProfileData}
+                    userProfile={userProfile}
                     isScrolling={isScrolling} />
-            </div>
         </>
     )
 }

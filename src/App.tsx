@@ -11,6 +11,7 @@ import { Profile } from "./components/Profile"
 
 import './App.css'
 
+
 function App() {
 
   const [userProfile, setUserProfile] = useState<NDKUserProfile>({})
@@ -36,10 +37,7 @@ function App() {
       console.log('user = ', user)
       
       user.fetchProfile().then((profile) => {
-        
-        console.log('user = ', profile)
         setUserProfile(profile as NDKUserProfile)
-
       })
       if (!!user.npub) {
         setUserNpub(user.npub)
@@ -53,11 +51,11 @@ function App() {
 
   return (
     <>
-      <Nav userNpub={userNpub} />
+      <Nav userNpub={userNpub} userProfile={userProfile} />
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
         <Route path="/home" element={<Home defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} userProfile={userProfile} />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} userProfile={userProfile} />
       </Routes>
     </>
   )

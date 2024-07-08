@@ -14,17 +14,15 @@ export interface Props {
         nip05: string;
     }
     metadata: Record<string, Metadata>
-
-    userProfileData: NDKEvent
 }
 
 // this is currently borked. experimenting w ternarys
-export const NoteCard = ({ event, metadata, user }: Props) => {
+export const NoteCard = ({ event, metadata }: Props) => {
 
         return (
             <div className="note">
                 <div className="note-banner">
-                    <Link to="/profile" >
+                    <Link to="/profile">
                         <img src={user.image} className="profile-image" />
                     </Link>
                     <h4 className="name">{user.name}</h4>
