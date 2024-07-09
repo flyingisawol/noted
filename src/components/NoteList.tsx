@@ -4,17 +4,15 @@ import { NoteCard } from "./NoteCard"
 
 interface Props {
     kind1Events: Array<string>;
-
 }
 
 export const NoteList = ({ kind1Events, metadata }: any) => {
 
     const feedContainerRef = useRef<any>(null);
-
+    console.log('notelist log')
     return (
         <div className="feed" >
-
-            {kind1Events.map((event, index:  number) => (
+            {kind1Events.map((event, index) => (
                 metadata[event.pubkey]?.picture &&
                 <NoteCard
                     key={index}

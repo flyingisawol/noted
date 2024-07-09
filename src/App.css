@@ -1,6 +1,3 @@
-#root {
-  
-}
 
 /* LANDING PAGE */
 
@@ -69,10 +66,8 @@ ul {
 form.input-form {
   display: flex;
   flex-direction: column;
-  margin: 5px;
   padding: 10px 0px 10px 0px;
   background-color: #000000;
-
 }
 
 .input-form .input-note {
@@ -203,6 +198,7 @@ form.input-form {
   width: 100vw;
   height: 180px;
   align-content: center;
+  border-bottom: 6px white solid;
 }
 
 .profile-header {
@@ -212,7 +208,7 @@ form.input-form {
 }
 
 .profile-page-image {
-  margin-top: -40px;
+  margin-top: -55px;
   margin-left: 20px;
   border: 6px white solid;
   object-fit: cover;

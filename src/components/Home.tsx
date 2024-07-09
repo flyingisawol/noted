@@ -44,12 +44,6 @@ export const Home = ({ defaultRelays, userNpub, userHexKey, userProfile }: Props
         sub.on('event', (event) => {
             setKind1Events((events) => insertEventIntoDescendingList(events, event))
             fetchProfilesFromNotes()
-
-            if (kind1Events.length <1) {
-                console.log(kind1Events)
-                fetchEventsFromSub()
-                console.log('running the cunt again')
-            }
         })
         sub.on('eose', () => {
             // console.log('EOSE')
@@ -129,24 +123,22 @@ export const Home = ({ defaultRelays, userNpub, userHexKey, userProfile }: Props
     }
 
     const fetchFollowList = async () => {
-        try {
-            let events = await ndk.fetchEvents(filter)
-            const newEventsArray = [...events]
-            const followListKeys = [] as Array<string>
-            newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
-            setFollowList(followListKeys)
-        } finally {
-            fetchEventsFromSub()
-        }
+        let events = await ndk.fetchEvents(filter)
+        const newEventsArray = [...events]
+        const followListKeys = [] as Array<string>
+        newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
+        setFollowList(followListKeys)
+        console.log('followlist: ', followList)
+        fetchEventsFromSub()
     }
 
     useEffect(() => {
-        fetchFollowList()
+        fetchFollowList().then(() => {
+        fetchEventsFromSub()
+
+        })
     }, [])
 
-    useEffect(() => {
-        fetchEventsFromSub()
-    }, [])
 
     return (
         <>

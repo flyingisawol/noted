@@ -4,7 +4,6 @@ import { Metadata } from "./Home";
 import { Profile } from './Profile'
 
 export interface Props {
-    event: [];
     user: {
         name: string;
         image: string;
@@ -13,8 +12,8 @@ export interface Props {
     metadata: Record<string, Metadata>
 }
 
-export const NoteCard = ({ event, metadata, user }: Props) => {
-
+export const NoteCard = ({ user, event }) => {
+    console.log('notecard log')
         return (
             <div className="note">
                 <div className="note-banner">

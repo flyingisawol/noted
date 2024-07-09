@@ -38,8 +38,7 @@ function App() {
       if (!!user.npub) {
         setUserNpub(user.npub);
         setUserHexKey(user.pubkey);
-        // console.log("userNpub, userHexKey set:", user.npub, user.pubkey);
-
+        console.log("userNpub, userHexKey set:", user.npub, user.pubkey);
         setActiveUser(user)
       }
     } catch (error) {
@@ -48,7 +47,6 @@ function App() {
   };
 
   const handleClick = async () => {
-
     await signer.user();
     const user = ndk.getUser({ npub: userNpub })
     let profile = await user.fetchProfile()
