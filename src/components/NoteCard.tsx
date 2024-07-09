@@ -1,23 +1,19 @@
+import { Link } from "react-router-dom";
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { Metadata } from "./Home";
-import { Link } from "react-router-dom";
 import { Profile } from './Profile'
 
 export interface Props {
-    event: string;
+    event: [];
     user: {
         name: string;
-        about: string;
         image: string;
-        npub: string;
         lud16: string;
-        nip05: string;
     }
     metadata: Record<string, Metadata>
 }
 
-// this is currently borked. experimenting w ternarys
-export const NoteCard = ({ event, metadata }: Props) => {
+export const NoteCard = ({ event, metadata, user }: Props) => {
 
         return (
             <div className="note">

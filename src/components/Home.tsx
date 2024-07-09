@@ -1,5 +1,5 @@
 import NDK, { NDKEvent, NDKNip07Signer, NDKFilter, NDKUserProfile } from '@nostr-dev-kit/ndk'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { nip19 } from 'nostr-tools'
 import { Create } from './Create'
 import { NoteCard } from './NoteCard'
@@ -22,7 +22,7 @@ interface Props {
     userProfile: NDKUserProfile
 }
 
-export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfile }: NDKUserProfile) => {
+export const Home = ({ defaultRelays, userNpub, userHexKey, userProfile }: Props) => {
 
     const [kind1Events, setKind1Events] = useState<Array<NDKEvent>>([])
     const [eventsExist, setEventsExist] = useState(false)
@@ -39,15 +39,17 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfi
         autoFetchUserMutelist: false,
     })
 
-    
-
     const fetchEventsFromSub = () => {
-
         const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50 }, { closeOnEose: false })
-
         sub.on('event', (event) => {
-            fetchProfilesFromNotes()
             setKind1Events((events) => insertEventIntoDescendingList(events, event))
+            fetchProfilesFromNotes()
+
+            if (kind1Events.length <1) {
+                console.log(kind1Events)
+                fetchEventsFromSub()
+                console.log('running the cunt again')
+            }
         })
         sub.on('eose', () => {
             // console.log('EOSE')
@@ -122,29 +124,28 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfi
         })
     }
 
-    // seems to be an intermittant issue, where the follow list array remains empty until a refresh (function runs again)?
-    const fetchFollowList = async () => {
-        
-        console.log('pubkeys= ', userNpub, userHexKey)
-        console.log(userProfile)
-        
-        const filter: NDKFilter = {
-            kinds: [3], authors: [userHexKey]
-        }
+    const filter: NDKFilter = {
+        kinds: [3], authors: [userHexKey]
+    }
 
-        let events = await ndk.fetchEvents(filter)
-        const newEventsArray = [...events]
-        const followListKeys = [] as Array<string>
-        newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
-        setFollowList(followListKeys)
+    const fetchFollowList = async () => {
+        try {
+            let events = await ndk.fetchEvents(filter)
+            const newEventsArray = [...events]
+            const followListKeys = [] as Array<string>
+            newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
+            setFollowList(followListKeys)
+        } finally {
+            fetchEventsFromSub()
+        }
     }
 
     useEffect(() => {
-        ndk.connect().then(() => {
-            fetchFollowList()
-            fetchEventsFromSub()
+        fetchFollowList()
+    }, [])
 
-        })
+    useEffect(() => {
+        fetchEventsFromSub()
     }, [])
 
     return (
@@ -153,7 +154,6 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props, { userProfi
                 <NoteList
                     kind1Events={kind1Events}
                     metadata={metadata}
-                    userProfile={userProfile}
                     isScrolling={isScrolling} />
         </>
     )

@@ -1,22 +1,23 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef } from "react"
+import { NDKEvent } from "@nostr-dev-kit/ndk";
 import { NoteCard } from "./NoteCard"
 
 interface Props {
     kind1Events: Array<string>;
+
 }
 
-export const NoteList = ({ kind1Events, userProfile, metadata }: any) => {
+export const NoteList = ({ kind1Events, metadata }: any) => {
 
     const feedContainerRef = useRef<any>(null);
 
     return (
-        <div className="feed" ref={feedContainerRef}>
+        <div className="feed" >
 
-            {kind1Events.map((event, index) => (
+            {kind1Events.map((event, index:  number) => (
                 metadata[event.pubkey]?.picture &&
                 <NoteCard
                     key={index}
-                    userProfile={userProfile}
                     event={event}
                     metadata={metadata}
                     user={{

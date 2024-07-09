@@ -3,7 +3,6 @@ import { Login } from "./Login";
 import { Create } from "./Create";
 import { NDKUserProfile } from "@nostr-dev-kit/ndk";
 
-
 export const Nav = ({ userProfile }) => {
 
     const navigate = useNavigate()
@@ -11,8 +10,6 @@ export const Nav = ({ userProfile }) => {
     const onClick = () => {
         return navigate("/")
     }
-
-    // lets get this displaying profile image once logged in. would this link to profile page?
 
     return (
         <>
@@ -26,7 +23,7 @@ export const Nav = ({ userProfile }) => {
                         <img src=""  className="logo" alt="" />
                     </li>
                     <li className="nav-right">
-                        <Link to="/profile" userProfile={userProfile}>
+                        <Link to="/profile">
                             <img className="profile-pic" src={userProfile.image} alt="" />
                         </Link> 
                     </li>
