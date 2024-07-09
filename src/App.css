@@ -191,11 +191,11 @@ form.input-form {
 .profile-page {
   display: flex;
   flex-direction: column;
+  width: 100vw;
 }
 
 .banner {
   object-fit: cover;
-  width: 100vw;
   height: 180px;
   align-content: center;
   border-bottom: 6px white solid;
