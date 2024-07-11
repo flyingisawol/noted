@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import NDK, { NDKNip07Signer, NDKUserProfile, NDKUser } from '@nostr-dev-kit/ndk'
+import NDK, { NDKNip07Signer, NDKUser, NDKUserProfile } from '@nostr-dev-kit/ndk'
 import { Route, Routes } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 
@@ -10,26 +10,52 @@ import { Profile } from "./components/Profile"
 
 import './App.css'
 
+export interface UserProfile {
+  about: string;
+  banner: string;
+  displayName: string;
+  image: string;
+  lud16: string;
+  name: string;
+  nip05: string;
+  reactions: boolean;
+  website: string;
+}
 
 function App() {
 
-  const [userProfile, setUserProfile] = useState<NDKUserProfile>({})
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    about: '',
+    banner: '',
+    displayName: '',
+    image: '',
+    lud16: '',
+    name: '',
+    nip05: '',
+    reactions: false,
+    website: '',
+  })
   const [userNpub, setUserNpub] = useState<string>('')
   const [userHexKey, setUserHexKey] = useState<string>('')
   const [activeUser, setActiveUser] = useState<NDKUser>()
 
   const navigate = useNavigate()
 
-  const defaultRelays = ["wss://relay.nostr.band", "wss://nos.lol", "wss://relay.damus.io"]
+  const defaultRelays = [
+    "wss://nos.lol", 
+    "wss://relay.primal.net", 
+    "wss://relay.nostr.band", 
+    "wss://relay.damus.io"
+  ]
+
   const ndk = new NDK({
     explicitRelayUrls: defaultRelays,
     autoConnectUserRelays: false,
     autoFetchUserMutelist: false,
   })
+
   const signer = new NDKNip07Signer()
   ndk.signer = signer
-  ndk.connect()
-
 
   const getUser = async () => {
     try {
@@ -47,28 +73,28 @@ function App() {
   };
 
   const handleClick = async () => {
-    await signer.user();
-    const user = ndk.getUser({ npub: userNpub })
-    let profile = await user.fetchProfile()
+    await ndk.connect()
 
-    setUserProfile(profile as NDKUserProfile);
+    const user = ndk.getUser({ npub: userNpub })
+
+    let profile = await user.fetchProfile()
+    setUserProfile(profile as UserProfile | any);
     navigate("/home");
   }
 
   useEffect(() => {
     getUser()
-
   }, [])
   
 
 
   return (
     <>
-      <Nav userProfile={userProfile as NDKUserProfile} />
+      <Nav userProfile={userProfile} />
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
-        <Route path="/home" element={<Home defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} userProfile={userProfile} />} />
-        <Route path="/profile" element={<Profile userProfile={userProfile as NDKUserProfile} />} />
+        <Route path="/home" element={<Home defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} />} />
+        <Route path="/profile" element={<Profile userProfile={userProfile} />} />
       </Routes>
     </>
   )

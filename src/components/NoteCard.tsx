@@ -13,7 +13,7 @@ export interface Props {
 }
 
 export const NoteCard = ({ user, event }) => {
-    console.log('notecard log')
+    
         return (
             <div className="note">
                 <div className="note-banner">

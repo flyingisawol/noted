@@ -1,8 +1,6 @@
-import NDK, { NDKEvent, NDKNip07Signer, NDKFilter, NDKUserProfile } from '@nostr-dev-kit/ndk'
-import { useState, useEffect, useRef } from 'react'
-import { nip19 } from 'nostr-tools'
+import { useState, useEffect } from 'react'
+import NDK, { NDKEvent, NDKFilter } from '@nostr-dev-kit/ndk'
 import { Create } from './Create'
-import { NoteCard } from './NoteCard'
 import { NoteList } from './NoteList'
 
 export interface Metadata {
@@ -19,19 +17,13 @@ interface Props {
     defaultRelays: Array<string>;
     userNpub: string;
     userHexKey: string;
-    userProfile: NDKUserProfile
 }
 
-export const Home = ({ defaultRelays, userNpub, userHexKey, userProfile }: Props) => {
+export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
 
     const [kind1Events, setKind1Events] = useState<Array<NDKEvent>>([])
-    const [eventsExist, setEventsExist] = useState(false)
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Object>({})
-    const [showEvents, setShowEvents] = useState<Boolean>(true)
-    const [fetchingEvents, setFetchingEvents] = useState<Boolean>(false)
-    const [isScrolling, setIsScrolling] = useState<Boolean>(false);
-    const feedContainerRef = useRef<any>(null);
 
     const ndk = new NDK({
         explicitRelayUrls: defaultRelays,
@@ -41,12 +33,38 @@ export const Home = ({ defaultRelays, userNpub, userHexKey, userProfile }: Props
 
     const fetchEventsFromSub = () => {
         const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50 }, { closeOnEose: false })
+
         sub.on('event', (event) => {
+
+            console.log('event: ', event)
+
             setKind1Events((events) => insertEventIntoDescendingList(events, event))
             fetchProfilesFromNotes()
+            console.log('kind1Events:', kind1Events)
         })
         sub.on('eose', () => {
-            // console.log('EOSE')
+            console.log('EOSE')
+        })
+        sub.on('notice', (notice) => {
+            console.log('notice: ', notice)
+        })
+    }
+
+    // fetching kind0 profile metadata to display user profile.
+    const fetchProfilesFromNotes = () => {
+
+        const pubkeysFromNotes = kind1Events.map((e) => e.pubkey)
+        const sub = ndk.subscribe({ kinds: [0], authors: pubkeysFromNotes })
+
+        sub.on('event', (event) => {
+            const metadata = JSON.parse(event.content) as Metadata
+            setMetadata((current) => ({
+                ...current,
+                [event.pubkey]: metadata,
+            }))
+        })
+        sub.on('eose', () => {
+            console.log('EOSE') // end of shared events.
         })
         sub.on('notice', (notice) => {
             console.log('notice: ', notice)
@@ -97,56 +115,39 @@ export const Home = ({ defaultRelays, userNpub, userHexKey, userProfile }: Props
         return sortedArray
     }
 
-    // fetching kind0 profile metadata to display user profile.
-    const fetchProfilesFromNotes = () => {
-
-        const pubkeysFromNotes = kind1Events.map((e) => e.pubkey)
-        const sub = ndk.subscribe({ kinds: [0], authors: pubkeysFromNotes })
-
-        sub.on('event', (event) => {
-            const metadata = JSON.parse(event.content) as Metadata
-            setMetadata((current) => ({
-                ...current,
-                [event.pubkey]: metadata,
-            }))
-        })
-        sub.on('eose', () => {
-            // console.log('EOSE') // end of shared events.
-        })
-        sub.on('notice', (notice) => {
-            console.log('notice: ', notice)
-        })
-    }
-
-    const filter: NDKFilter = {
-        kinds: [3], authors: [userHexKey]
-    }
-
     const fetchFollowList = async () => {
+        console.log('followlist function exe')
+        await ndk.connect()
+
+        const filter: NDKFilter = {
+            kinds: [3], authors: [userHexKey]
+        }
+
         let events = await ndk.fetchEvents(filter)
+
         const newEventsArray = [...events]
+        
         const followListKeys = [] as Array<string>
         newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
+        
+        console.log('followListKeys: ', followListKeys)
+
         setFollowList(followListKeys)
-        console.log('followlist: ', followList)
-        fetchEventsFromSub()
     }
 
     useEffect(() => {
-        fetchFollowList().then(() => {
+        fetchFollowList()
         fetchEventsFromSub()
-
-        })
     }, [])
 
 
     return (
         <>
             <Create />
-                <NoteList
-                    kind1Events={kind1Events}
-                    metadata={metadata}
-                    isScrolling={isScrolling} />
+            <NoteList
+                kind1Events={kind1Events}
+                metadata={metadata}
+            />
         </>
     )
 }

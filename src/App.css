@@ -163,7 +163,7 @@ form.input-form {
   max-width: 45px;
   max-height: 45px;
   border-radius: 50% !important;
-  object-fit: fill !important;
+  object-fit: cover !important;
   margin: 0 3px 0 3px;
   padding-left: 5px;
 }
@@ -203,8 +203,8 @@ form.input-form {
 
 .profile-header {
   display: flex;
-  justify-content: space-around;
-  max-width: 400px;
+  justify-content: center;
+  margin-left: 65px;
 }
 
 .profile-page-image {
@@ -225,16 +225,12 @@ form.input-form {
   align-items: center;
 }
 
-.content-box {
-  width: 50px;
-  height: 50px
-}
-
 .profile-name {
-  margin: 0;
+  margin-top: 0px;
+  margin-left: 10px;
   color: #646cffaa;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 36px;
+  font-size: 32px;
 }
 
 .profile-content2 {
@@ -243,11 +239,73 @@ form.input-form {
   align-items: center;
 }
 .zap-icon {
+  margin-top: 0px;
+  margin-left: 20px;
   min-width: 40px;
   max-width: 40px;
   min-height: 30px;
   max-height: 30px;
-  border: white 2px solid;
-  padding: 5px;
+  padding: 8px;
   border-radius: 40%;
 }
+
+button.zap {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* LOADING INDICATOR */
+
+.loader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 6rem;
+  margin-top: 9rem;
+  margin-bottom: 3rem;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  animation: pulsOut 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 0 1rem rgba(255, 255, 255, 0.75));
+}
+.loader:before {
+  width: 100%;
+  padding-bottom: 100%;
+  box-shadow: inset 0 0 0 1rem #fff;
+  animation-name: pulsIn;
+}
+.loader:after {
+  width: calc(100% - 2rem);
+  padding-bottom: calc(100% - 2rem);
+  box-shadow: 0 0 0 0 #fff;
+}
+
+@keyframes pulsIn {
+  0% {
+    box-shadow: inset 0 0 0 1rem #fff;
+    opacity: 1;
+  }
+  50%, 100% {
+    box-shadow: inset 0 0 0 0 #fff;
+    opacity: 0;
+  }
+}
+
+@keyframes pulsOut {
+  0%, 50% {
+    box-shadow: 0 0 0 0 #fff;
+    opacity: 0;
+  }
+  100% {
+    box-shadow: 0 0 0 1rem #fff;
+    opacity: 1;
+  }
+}
+    
+    

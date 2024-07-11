@@ -1,9 +1,8 @@
 import { useNavigate, Link } from "react-router-dom"
 import { Login } from "./Login";
 import { Create } from "./Create";
-import { NDKUserProfile } from "@nostr-dev-kit/ndk";
 
-export const Nav = ({ userProfile }) => {
+export const Nav = ({ userProfile }: any) => {
 
     const navigate = useNavigate()
 
