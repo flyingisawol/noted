@@ -7,6 +7,7 @@ import { Home } from './components/Home'
 import { Nav } from "./components/Nav"
 import { Landing } from "./components/Landing"
 import { Profile } from "./components/Profile"
+import { ProfileById } from './components/ProfileById'
 
 import './App.css'
 
@@ -95,6 +96,7 @@ function App() {
         <Route path="/" element={<Landing handleClick={handleClick} />} />
         <Route path="/home" element={<Home defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} />} />
+        <Route path="/profile/:id" element={<ProfileById />} />
       </Routes>
     </>
   )

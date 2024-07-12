@@ -21,17 +21,13 @@ export const Create = () => {
     // figure out why relay not able to receive when publishing note. !!!!
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault() // prevents page being refreshed
 
         const newNote = new NDKEvent(ndk)
         newNote.kind = 1
         newNote.content = input
+        newNote.publish()
         
-        signer.user().then(async (user) => {
-            if (!!user.npub) {
-            }
-            newNote.publish()
-        })
+        
         navigate("/home")
     }
 

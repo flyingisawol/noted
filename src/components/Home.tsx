@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react'
 import NDK, { NDKEvent, NDKFilter } from '@nostr-dev-kit/ndk'
+import { insertEventIntoDescendingList } from '../utils/helperFunctions'
+import { useDebounce } from "use-debounce";
+
 import { Create } from './Create'
 import { NoteList } from './NoteList'
 
 export interface Metadata {
     name?: string;
+    display_name?: string;
+    about?: string;
     picture?: string;
     nip05?: string;
-    about?: string;
     lud16?: string;
-
-    metadata: Record<string, Metadata>
 }
 
 interface Props {
@@ -21,9 +23,10 @@ interface Props {
 
 export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
 
-    const [kind1Events, setKind1Events] = useState<Array<NDKEvent>>([])
+    const [kind1Events, setKind1Events] = useState<NDKEvent[]>([])
+
     const [followList, setFollowList] = useState<Array<string>>([])
-    const [metadata, setMetadata] = useState<Object>({})
+    const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
 
     const ndk = new NDK({
         explicitRelayUrls: defaultRelays,
@@ -31,32 +34,31 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
         autoFetchUserMutelist: false,
     })
 
+    // there remains some issue with useState, and state management relating to kind1Events state var. toggle the log triggers events.
     const fetchEventsFromSub = () => {
+
         const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50 }, { closeOnEose: false })
-
-        sub.on('event', (event) => {
-
-            console.log('event: ', event)
-
-            setKind1Events((events) => insertEventIntoDescendingList(events, event))
+        // console.log('fetchEvents')
+        
+        sub.on('event', (event: NDKEvent) => {
+            setKind1Events((events: NDKEvent[]) => insertEventIntoDescendingList(events, event))
+            // console.log('settingKind1Events: ', kind1Events)
             fetchProfilesFromNotes()
-            console.log('kind1Events:', kind1Events)
         })
         sub.on('eose', () => {
-            console.log('EOSE')
+            // console.log('EOSE')
         })
         sub.on('notice', (notice) => {
             console.log('notice: ', notice)
         })
     }
 
-    // fetching kind0 profile metadata to display user profile.
     const fetchProfilesFromNotes = () => {
-
+        // console.log('fetchingProfilesFromNotes Function')
         const pubkeysFromNotes = kind1Events.map((e) => e.pubkey)
         const sub = ndk.subscribe({ kinds: [0], authors: pubkeysFromNotes })
 
-        sub.on('event', (event) => {
+        sub.on('event', (event: NDKEvent) => {
             const metadata = JSON.parse(event.content) as Metadata
             setMetadata((current) => ({
                 ...current,
@@ -64,75 +66,37 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
             }))
         })
         sub.on('eose', () => {
-            console.log('EOSE') // end of shared events.
+            // console.log('EOSE') // end of shared events.
         })
         sub.on('notice', (notice) => {
             console.log('notice: ', notice)
         })
     }
 
-    // orders firehose feed into descending list 
-    function insertEventIntoDescendingList<T extends NDKEvent>(
-        sortedArray: T[],
-        event: T
-    ) {
-        let start = 0;
-        let end = sortedArray.length - 1;
-        let midPoint;
-        let position = start;
-
-        if (end < 0) {
-            position = 0;
-        } else if (event.created_at < sortedArray[end].created_at) {
-            position = end + 1;
-        } else if (event.created_at >= sortedArray[start].created_at) {
-            position = start;
-        } else
-            while (true) {
-                if (end <= start + 1) {
-                    position = end;
-                    break;
-                }
-                midPoint = Math.floor(start + (end - start) / 2);
-                if (sortedArray[midPoint].created_at > event.created_at) {
-                    start = midPoint;
-                } else if (sortedArray[midPoint].created_at < event.created_at) {
-                    end = midPoint;
-                } else {
-                    position = midPoint;
-                    break;
-                }
-            }
-
-        // insert when num is NOT already in (no duplicates)
-        if (sortedArray[position]?.id !== event.id) {
-            return [
-                ...sortedArray.slice(0, position),
-                event,
-                ...sortedArray.slice(position),
-            ];
-        }
-        return sortedArray
-    }
-
+    // gets users kind3 followList, to filter feed by this list.
     const fetchFollowList = async () => {
-        console.log('followlist function exe')
-        await ndk.connect()
 
         const filter: NDKFilter = {
             kinds: [3], authors: [userHexKey]
         }
 
+        await ndk.connect()
         let events = await ndk.fetchEvents(filter)
 
         const newEventsArray = [...events]
-        
+
         const followListKeys = [] as Array<string>
         newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
-        
-        console.log('followListKeys: ', followListKeys)
 
-        setFollowList(followListKeys)
+        if (followListKeys.length > 0) {
+            console.log('followListKeys.length: ', followListKeys.length)
+            setFollowList(followListKeys)
+            fetchEventsFromSub()
+            console.log('calling fetch events from fetchFollowList function')
+        } else {
+            console.log('followListKeys.length: from the else statement', followListKeys.length)
+        }
+
     }
 
     useEffect(() => {
@@ -140,12 +104,11 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
         fetchEventsFromSub()
     }, [])
 
-
     return (
         <>
             <Create />
             <NoteList
-                kind1Events={kind1Events}
+                notes={kind1Events}
                 metadata={metadata}
             />
         </>

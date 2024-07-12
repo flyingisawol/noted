@@ -1,30 +1,37 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NoteCard } from "./NoteCard"
+import { NDKEvent } from "@nostr-dev-kit/ndk"
+import { Metadata } from "./Home"
 
+interface Props {
+    notes: NDKEvent[];
+    metadata: Record<string, Metadata>
+}
 
-export const NoteList = ({ kind1Events, metadata }) => {
+export const NoteList = ({ notes, metadata }: Props) => {
+
+    // console.log('notelist notes.length: ',notes.length)
 
     return (
         <div className="feed" >
-            {kind1Events.map((event, index) => (
-                metadata[event.pubkey]?.picture &&
+            {notes.map((note, index) => (
+                metadata[note.pubkey]?.picture &&
                 <NoteCard
-                key={index}
-                event={event}
-                metadata={metadata}
-                user={{
-                    name: metadata[event.pubkey]?.name ?? metadata[event.pubkey]?.display_name,
-                    image: metadata[event.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`,
-                    lud16: metadata[event.pubkey]?.lud16
-                }}
+                    key={index}
+                    content={note.content}
+                    user={{
+                        name: metadata[note.pubkey]?.name ?? metadata[note.pubkey]?.display_name,
+                        image: metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${note.id}`,
+                        lud16: metadata[note.pubkey]?.lud16,
+                        pubkey: note.pubkey
+                    }}
+                    created_at={note.created_at}
+                    metadata={metadata}
                 />
             ))}
-            {/* {kind1Events.length > 0 ? (
-                <div></div>
-        ) : (
-            <span className="loader"></span>
-
-        )} */}
         </div>
     )
+    // return <div className="feed">
+    //     <span className="loader"></span>
+    // </div>
 }

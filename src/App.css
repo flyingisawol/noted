@@ -18,27 +18,27 @@ ul {
   padding: 0;
 }
 
-.nav ul{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+.nav {
+  /* display: flex; */
+  justify-content: center;
   align-items: center;
-  min-width: 100vw;
+  min-height: 70px;
+  max-height: 70px;
+  min-width: 100%;
   border-bottom: 1px solid #333300;
-  padding: 10px;
-  background-color: #000000;
 }
 
-.nav {
+.nav ul{
   display: flex;
-  justify-content: center;
-  min-height: 70px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000000;
+  padding: 10px;
 }
 
 .nav-left button {
   margin-left: 10px;
 }
-
 
 .profile-pic {
   min-width: 45px;
@@ -61,6 +61,8 @@ ul {
   justify-content: center;
   align-items: center;
   background-color: #000000;
+  min-width: 100%;
+  padding: 5px 0 5px 0;
 }
 
 form.input-form {
@@ -77,7 +79,7 @@ form.input-form {
 }
 
 .input-note {
-  margin: 0 0 0px 0;
+  margin: 0 0 0 0;
   padding: 5px;
   color: whitesmoke;
   font-size: 14px;
@@ -147,13 +149,23 @@ form.input-form {
   display: '-webkit-box';
   font-size: 15px;
   font-weight: 500;
-  min-width: 400px;
-  max-width: 400px;
+  min-width: 410px;
+  max-width: 410px;
 }
 
 .note-content {
-  padding: 2px;
+  margin-top: 5px;
   overflow: auto;
+}
+
+.note-image {
+  margin: 5px 0px 0px 0px;
+  padding: 3px 0 3px 0;
+  min-width: 410px;
+  max-width: 410px;
+  width: auto;
+  height: auto;
+  display: block;
 }
 
 /* PROFILE SECTION OF NOTES */
@@ -174,7 +186,7 @@ form.input-form {
   justify-content: flex-start;
   align-items: center;
   background-color: #242424;
-  margin: -5px -10px -10px -10px;
+  margin: -5px -10px 0px -10px;
   padding-top: 3px;
   border: #333333 solid 3px 1px 3px 1px;
   border-radius: 15px;
@@ -271,39 +283,39 @@ button.zap {
   content: "";
   position: absolute;
   border-radius: 50%;
-  animation: pulsOut 1.8s ease-in-out infinite;
-  filter: drop-shadow(0 0 1rem rgba(255, 255, 255, 0.75));
+  animation: pulsOut 1.35s ease-in-out infinite;
+  filter: drop-shadow(0 0 .5rem rgba(100, 108, 255, 0.75));
 }
 .loader:before {
   width: 100%;
   padding-bottom: 100%;
-  box-shadow: inset 0 0 0 1rem #fff;
+  box-shadow: inset 0 0 0 .5rem #646cffaa;
   animation-name: pulsIn;
 }
 .loader:after {
-  width: calc(100% - 2rem);
-  padding-bottom: calc(100% - 2rem);
-  box-shadow: 0 0 0 0 #fff;
+  width: calc(100% - 1rem);
+  padding-bottom: calc(100% - 1rem);
+  box-shadow: 0 0 0 0 #646cffaa;
 }
 
 @keyframes pulsIn {
   0% {
-    box-shadow: inset 0 0 0 1rem #fff;
+    box-shadow: inset 0 0 0 .5rem #fff;
     opacity: 1;
   }
   50%, 100% {
-    box-shadow: inset 0 0 0 0 #fff;
+    box-shadow: inset 0 0 0 0 #646cffaa;
     opacity: 0;
   }
 }
 
 @keyframes pulsOut {
   0%, 50% {
-    box-shadow: 0 0 0 0 #fff;
+    box-shadow: 0 0 0 0 #646cffaa;
     opacity: 0;
   }
   100% {
-    box-shadow: 0 0 0 1rem #fff;
+    box-shadow: 0 0 0 .5rem #fff;
     opacity: 1;
   }
 }
