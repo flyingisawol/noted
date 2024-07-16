@@ -28,8 +28,48 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
 
     const ndk = new NDK({
         explicitRelayUrls: defaultRelays,
+        autoConnectUserRelays: true,
+        autoFetchUserMutelist: false,
     })
     ndk.connect()
+
+    const fetchFollowList = async () => {
+
+        const filter: NDKFilter = {
+            kinds: [3], authors: [userHexKey]
+        }
+        const events = await ndk.fetchEvents(filter)
+
+        const newEventsArray = [...events]
+
+        const followListKeys = [] as Array<string>
+        newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
+
+        if (followListKeys.length > 0 || followList.length > 0) {
+            console.log('followListKeys: ', followListKeys.length)
+            setFollowList(followListKeys)
+            fetchEventsFromSub()
+
+        } else {
+            fetchEventsFromSub()
+            console.log('followListKeys.length: from the else statement', followListKeys.length)
+        }
+    }
+
+    const fetchEventsFromSub = () => {
+        const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50 }, { closeOnEose: false })
+        sub.on('event', (event) => {
+            setKind1Events((events) => insertEventIntoDescendingList(events, event))
+            fetchProfilesFromNotes()
+            console.log('subscription events: ', kind1Events.length)
+        })
+        sub.on('eose', () => {
+            // console.log('EOSE')
+        })
+        sub.on('notice', (notice) => {
+            console.log('notice: ', notice)
+        })
+    }
 
     const fetchProfilesFromNotes = () => {
 
@@ -53,48 +93,13 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
         })
     }
 
-    const fetchFollowList = async () => {
-
-        const filter: NDKFilter = {
-            kinds: [3], authors: [userHexKey]
-        }
-        const events = await ndk.fetchEvents(filter)
-
-        const newEventsArray = [...events]
-        
-        const followListKeys = [] as Array<string>
-        newEventsArray[0].tags.forEach((innerArray) => followListKeys.push(innerArray[1]))
-
-        if (followListKeys.length > 0 || followList.length > 0 ) {
-            console.log('followListKeys: ', followListKeys.length)
-            setFollowList(followListKeys)
-            fetchEventsFromSub()
-
-        } else {
-            fetchEventsFromSub()
-            console.log('followListKeys.length: from the else statement', followListKeys.length)
-        }
-    }
-
-    const fetchEventsFromSub = () => {
-        const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50}, {closeOnEose: false})
-        sub.on('event', (event) => {
-            setKind1Events((events) => insertEventIntoDescendingList(events, event))
-            console.log('subscription events: ', kind1Events.length)
-        })
-        sub.on('eose', () => {
-            // console.log('EOSE')
-        })
-        sub.on('notice', (notice) => {
-            console.log('notice: ', notice)
-        })
-    }
-
     useEffect(() => {
         fetchFollowList()
+    }, [followList])
+
+    useEffect(() => {
         fetchEventsFromSub()
-        fetchProfilesFromNotes()
-    }, [kind1Events, followList])
+    }, [kind1Events])
 
     return (
         <>
