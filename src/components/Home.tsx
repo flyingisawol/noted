@@ -32,8 +32,8 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
     ndk.connect()
 
     const fetchProfilesFromNotes = () => {
+
         const pubkeysFromNotes = kind1Events.map((e) => e.pubkey)
-        // console.log('pubkeysfromnotes', pubkeysFromNotes)
         const sub = ndk.subscribe({ kinds: [0], authors: pubkeysFromNotes })
 
         sub.on('event', (event) => {
@@ -77,7 +77,7 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
     }
 
     const fetchEventsFromSub = () => {
-        const sub = ndk.subscribe({ kinds: [1], authors: followList})
+        const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 50}, {closeOnEose: false})
         sub.on('event', (event) => {
             setKind1Events((events) => insertEventIntoDescendingList(events, event))
             console.log('subscription events: ', kind1Events.length)
@@ -90,9 +90,11 @@ export const Home = ({ defaultRelays, userNpub, userHexKey }: Props) => {
         })
     }
 
-    fetchFollowList()
-    fetchEventsFromSub()
-    fetchProfilesFromNotes()
+    useEffect(() => {
+        fetchFollowList()
+        fetchEventsFromSub()
+        fetchProfilesFromNotes()
+    }, [kind1Events, followList])
 
     return (
         <>
