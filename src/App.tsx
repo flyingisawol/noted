@@ -43,10 +43,10 @@ function App() {
   const navigate = useNavigate()
 
   const defaultRelays = [
-    "wss://nos.lol", 
-    "wss://relay.primal.net", 
-    "wss://relay.nostr.band", 
-    "wss://relay.damus.io"
+    "wss://relay.nostr.band",
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.snort.social"
   ]
 
   const ndk = new NDK({
@@ -71,7 +71,7 @@ function App() {
     } catch (error) {
       console.error("Error fetching user profile:", error);
     }
-  };
+  }
 
   const handleClick = async () => {
     await ndk.connect()
@@ -79,6 +79,7 @@ function App() {
     const user = ndk.getUser({ npub: userNpub })
 
     let profile = await user.fetchProfile()
+
     setUserProfile(profile as UserProfile | any);
     navigate("/home");
   }

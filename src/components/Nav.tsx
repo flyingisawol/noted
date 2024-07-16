@@ -10,6 +10,8 @@ export const Nav = ({ userProfile }: any) => {
         return navigate("/")
     }
 
+    const profilePic = userProfile?.image ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${userProfile?.pubkey ?? 'default'}`;
+
     return (
         <>
             <nav className="nav">
@@ -23,7 +25,7 @@ export const Nav = ({ userProfile }: any) => {
                     </li>
                     <li className="nav-right">
                         <Link to="/profile">
-                            <img className="profile-pic" src={userProfile.image} alt="" />
+                            <img className="profile-pic" src={profilePic} alt="" />
                         </Link> 
                     </li>
                 </ul>

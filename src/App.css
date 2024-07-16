@@ -19,17 +19,17 @@ ul {
 }
 
 .nav {
-  /* display: flex; */
   justify-content: center;
   align-items: center;
-  min-height: 70px;
-  max-height: 70px;
   min-width: 100%;
   border-bottom: 1px solid #333300;
 }
 
 .nav ul{
   display: flex;
+  min-height: 60px;
+  max-height: 60px;
+  
   justify-content: space-between;
   align-items: center;
   background-color: #000000;

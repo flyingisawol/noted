@@ -1,10 +1,12 @@
 import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 
+interface Props {
+    name: string;
+    pic: string;
+}
 
-
-export const ProfileById = ({ name, pic }) => {
-    console.log(name, pic)
+export const ProfileById = ({ name, pic }: Props) => {
 
     const { id } = useParams()
 
