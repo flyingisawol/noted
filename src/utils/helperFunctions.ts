@@ -1,9 +1,6 @@
 import { NDKEvent } from "@nostr-dev-kit/ndk";
 
-export function insertEventIntoDescendingList<T extends NDKEvent>(
-    sortedArray: T[],
-    event: T
-) {
+export function insertEventIntoDescendingList(sortedArray: any, event: any) {
     let start = 0;
     let end = sortedArray.length - 1;
     let midPoint;

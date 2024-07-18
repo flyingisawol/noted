@@ -10,11 +10,12 @@ interface Props {
 
 export const NoteList = ({ notes, metadata }: Props) => {
 
+    console.log('metadata: ', metadata)
+
     return (
         <div className="feed" >
 
             {notes.map((note, index) => (
-
                 <NoteCard
                     key={index}
                     content={note.content}
@@ -22,7 +23,8 @@ export const NoteList = ({ notes, metadata }: Props) => {
                         name: metadata[note.pubkey]?.name ?? metadata[note.pubkey]?.display_name,
                         image: metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`,
                         lud16: metadata[note.pubkey]?.lud16,
-                        pubkey: note.pubkey
+                        pubkey: note.pubkey,
+                        about: metadata[note.pubkey]?.about
                     }}
                     created_at={note.created_at}
                     metadata={metadata}

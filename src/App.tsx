@@ -65,7 +65,7 @@ function App() {
       if (!!user.npub) {
         setUserNpub(user.npub);
         setUserHexKey(user.pubkey);
-        console.log("userNpub, userHexKey set:", user.npub, user.pubkey);
+        // console.log("userNpub, userHexKey set:", user.npub, user.pubkey);
         setActiveUser(user)
       }
     } catch (error) {
@@ -86,7 +86,7 @@ function App() {
 
   useEffect(() => {
     getUser()
-  }, [])
+  }, [userProfile])
   
 
 
@@ -95,9 +95,9 @@ function App() {
       <Nav userProfile={userProfile} />
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
-        <Route path="/home" element={<Home defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} />} />
+        <Route path="/home" element={<Home defaultRelays={defaultRelays} profile={userProfile} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} />} />
-        <Route path="/profile/:id" element={<ProfileById />} />
+        {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
       </Routes>
     </>
   )
