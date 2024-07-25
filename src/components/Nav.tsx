@@ -19,7 +19,7 @@ export const Nav = ({ userProfile, userNpub, userHexKey, onLogout }: any) => {
                     </li>
                     <li className="nav-middle">
                         {userNpub.length > 0 &&
-                        <img src="src/assets/noteBubble.png"  className="logo" alt="" />
+                        <img src="/assets/noteBubble.png"  className="logo" alt="" />
                         }
                     </li>
                     <li className="nav-right">

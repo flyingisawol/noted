@@ -12,7 +12,7 @@ export const Profile = ({ userProfile }: any) => {
                 <div className='profile-header'>
                     <img className="profile-page-image" src={userProfile.image} alt="" />
                     <button className='zap'>
-                    <img className="zap-icon" src="src/assets/flash.png" alt={userProfile.lud16} />
+                    <img className="zap-icon" src="/assets/flash.png" alt={userProfile.lud16} />
                     </button>
                 </div>
                 <div className='profile-content2'>

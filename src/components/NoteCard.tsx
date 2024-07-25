@@ -116,12 +116,12 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     useEffect(() => {
         fetchFollowList()
         fetchProfiles()
-        console.log('followList useEffect')
+        // console.log('followList useEffect')
     }, [])
 
     useEffect(() => {
         fetchNotes()
-        console.log('fetchNotes useEffect')
+        // console.log('fetchNotes useEffect')
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
 
 
