@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import NDK, { NDKEvent, NDKFilter, NDKNip07Signer } from '@nostr-dev-kit/ndk'
-import { UserProfile } from '../App'
-
 import { NoteList } from './NoteList'
+import { Create } from './Create'
+
 
 export interface Metadata {
     name?: string;
@@ -26,6 +26,7 @@ export const Home = ({ ndk, userNpub, userHexKey }: Props) => {
     
     return (
         <>
+            <Create ndk={ndk}/>
             <NoteList userHexKey={userHexKey} ndk={ndk} />
         </>
     )
