@@ -138,7 +138,7 @@ form.input-form {
 .note {
   min-height: 120px;
   border-top: #333333 solid 1px;
-  background-color: #2a2828;
+  background-color: #000000;
   overflow: hidden;
   -webkit-line-clamp: 5;
   line-clamp: 5;
@@ -156,6 +156,7 @@ form.input-form {
 
 .text-content {
   margin: 5px;
+  padding: 0 0 5px 0;
 }
 
 img.note-image {
@@ -187,18 +188,17 @@ img.note-image {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  background-color: #242424;
-  /* margin: -5px -10px 0px -10px; */
+  background-color: #000000;
   padding-top: 3px;
-  /* border: #333333 solid 3px 1px 3px 1px; */
-  /* border-radius: 15px; */
   max-height: 60px;
 }
 
 .name {
-  color: #ffffff;
-  font-size: 16px;
+  color: #fff;
+  /* text-decoration: underline; */
+  font-size: 16.4px;
   margin-left: 5px;
+  border-bottom: #822EB9 solid 1px;
 }
 
 /* PROFILE PAGE */

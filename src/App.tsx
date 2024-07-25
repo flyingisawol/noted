@@ -38,7 +38,6 @@ function App() {
   })
   const [userNpub, setUserNpub] = useState<string>('')
   const [userHexKey, setUserHexKey] = useState<string>('')
-  const [activeUser, setActiveUser] = useState<NDKUser>()
 
   const navigate = useNavigate()
 
@@ -58,46 +57,32 @@ function App() {
   const signer = new NDKNip07Signer()
   ndk.signer = signer
 
-  const getUser = async () => {
-    try {
-      const user = await signer.user();
-
-      if (!!user.npub) {
-        setUserNpub(user.npub);
-        setUserHexKey(user.pubkey);
-        // console.log("userNpub, userHexKey set:", user.npub, user.pubkey);
-        setActiveUser(user)
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
-  }
-
   const handleClick = async () => {
-    await ndk.connect()
 
-    const user = ndk.getUser({ npub: userNpub })
-
+    const user = await signer.user();
     let profile = await user.fetchProfile()
-
+    
     setUserProfile(profile as UserProfile | any);
+    
+    if (!!user.npub) {
+      setUserNpub(user.npub);
+      setUserHexKey(user.pubkey);
+    }
     navigate("/home");
   }
 
   useEffect(() => {
-    getUser()
-  }, [userProfile])
-  
-
+    ndk.connect()
+  }, [ndk])
 
   return (
     <>
-      <Nav userProfile={userProfile} />
+      <Nav userProfile={userProfile} userHexKey={userHexKey} userNpub={userNpub} />
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
-        <Route path="/home" element={<Home defaultRelays={defaultRelays} profile={userProfile} userNpub={userNpub} userHexKey={userHexKey} />} />
+        <Route path="/home" element={<Home ndk={ndk} defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} />} />
-        {/* <Route path="/profile/:id" element={<ProfileById />} /> */}
+        <Route path="/profile/:id" element={<ProfileById />} />
       </Routes>
     </>
   )
