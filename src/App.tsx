@@ -52,6 +52,7 @@ function App() {
     explicitRelayUrls: defaultRelays,
     autoConnectUserRelays: false,
     autoFetchUserMutelist: false,
+    signer: new NDKNip07Signer
   })
 
   const signer = new NDKNip07Signer()
@@ -87,7 +88,7 @@ function App() {
       <Nav userProfile={userProfile} userHexKey={userHexKey} userNpub={userNpub} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
-        <Route path="/home" element={<Home ndk={ndk} defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} />} />
+        <Route path="/home" element={<Home ndk={ndk} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} />} />
         <Route path="/profile/:id" element={<ProfileById />} />
       </Routes>

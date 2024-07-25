@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import NDK, { NDKEvent, NDKFilter, NDKNip07Signer } from '@nostr-dev-kit/ndk'
 import { UserProfile } from '../App'
 
-import { Create } from './Create'
 import { NoteList } from './NoteList'
 
 export interface Metadata {
@@ -16,20 +15,17 @@ export interface Metadata {
 }
 
 export interface Props {
-    defaultRelays: Array<string>;
     userNpub: string;
     userHexKey: string;
     ndk: NDK;
 }
 
-export const Home = ({ ndk, defaultRelays, userNpub, userHexKey }: Props) => {
+export const Home = ({ ndk, userNpub, userHexKey }: Props) => {
 
     // nutzaps kind: 10019, 9321
-
     
     return (
         <>
-            <Create ndk={ndk} userHexKey={userHexKey} />
             <NoteList userHexKey={userHexKey} ndk={ndk} />
         </>
     )

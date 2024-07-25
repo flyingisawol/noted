@@ -10,18 +10,6 @@ import { render } from "react-dom";
 interface Props {
     ndk: NDK;
     userHexKey: string;
-
-    user: {
-        name: string;
-        image: string;
-        about: string;
-        lud16: string;
-        pubkey: string;
-    };
-
-    content: string;
-    created_at: number | undefined;
-    metadata: Record<string, Metadata>
 }
 
 export const NoteCard = ({ ndk, userHexKey }: Props) => {
