@@ -29,7 +29,7 @@ export const Home = ({ ndk, defaultRelays, userNpub, userHexKey }: Props) => {
     
     return (
         <>
-            <Create userHexKey={userHexKey} />
+            <Create ndk={ndk} userHexKey={userHexKey} />
             <NoteList userHexKey={userHexKey} ndk={ndk} />
         </>
     )

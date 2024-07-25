@@ -10,6 +10,22 @@
   margin: 20px;
 }
 
+/* LOGIN PAGE */
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+}
+
+.login-logo {
+  max-width: 250px;
+  border-radius: 25px;
+  padding: 10px;
+}
+
 /* NAVBAR */
 
 ul {
@@ -36,8 +52,22 @@ ul {
   padding: 10px;
 }
 
+.nav-left {
+  min-width: 100px;
+}
+
 .nav-left button {
   margin-left: 10px;
+}
+
+.nav-middle {
+  min-width: 100px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.nav-right {
+  min-width: 100px;
 }
 
 .profile-pic {
@@ -48,8 +78,11 @@ ul {
 }
 
 .logo {
-  max-width: 80px;
-  border-radius: 100px;
+  margin: 0;
+  padding: 0;
+  max-height: 40px;
+  border-radius: 10px;
+  border: #6A6A6A solid 2px;
   margin-right: 20px;
 }
  
@@ -133,6 +166,8 @@ form.input-form {
   align-items: center;
   margin: 0 auto;
   padding: 0;
+  background-color: #000000;
+
 }
 
 .note {
@@ -198,7 +233,7 @@ img.note-image {
   /* text-decoration: underline; */
   font-size: 16.4px;
   margin-left: 5px;
-  border-bottom: #822EB9 solid 1px;
+  border-bottom: rgba(100, 108, 255, 0.6) solid 1px;
 }
 
 /* PROFILE PAGE */

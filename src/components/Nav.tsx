@@ -30,11 +30,14 @@ export const Nav = ({ userProfile, userNpub, userHexKey }: any) => {
             <nav className="nav">
                 <ul>
                     <li className="nav-left">
+                        {userNpub.length > 0 && 
                         <button onClick={onClick}
-                        >logout</button>
+                        >logout</button>}
                     </li>
                     <li className="nav-middle">
-                        <img src=""  className="logo" alt="" />
+                        {userNpub.length > 0 &&
+                        <img src="src/assets/noteBubble.png"  className="logo" alt="" />
+                        }
                     </li>
                     <li className="nav-right">
                         <Link to="/profile">

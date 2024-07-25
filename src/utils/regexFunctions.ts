@@ -1,11 +1,11 @@
-
+import { NoteCard } from "../components/NoteCard";
 
 const [processedContent, setProcessedContent] = useState<string[]>([]);
     
 const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
 const npubRegex = /npub:(\w+)/g;
 
-const renderImages = () => {
+export const renderImages = () => {
     const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif))/g;
     return content.split(imageRegex).map((part, index) => (
         <div key={index}>
@@ -16,7 +16,7 @@ const renderImages = () => {
     ));
 };
 
-const renderText = () => {
+export const renderText = () => {
     return content.split(/\n/).map((part, index) => (
         <span key={index}>
             {part.split(/(\s+)/).map((subPart, subIndex) => {
@@ -30,7 +30,7 @@ const renderText = () => {
     ));
 };
 
-const processContent = async () => {
+export const processContent = async () => {
     let processed = await Promise.all(
         content.split(/\n/).map(async (part, index) => {
             return await Promise.all(

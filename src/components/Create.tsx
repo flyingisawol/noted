@@ -4,16 +4,13 @@ import { useNavigate } from "react-router-dom"
 
 interface Props {
     pubkey: string;
+    ndk: NDK;
 }
 
-export const Create = ({ pubkey }: Props) => {
+export const Create = ({ ndk }: Props) => {
 
     const [input, setInput] = useState<string>("")
     const navigate = useNavigate()
-
-    const ndk = new NDK({
-        explicitRelayUrls: ["wss://relay.primal.net", "wss://relay.nostr.band", "wss://relay.damus.io", "wss://nos.lol"], signer: new NDKNip07Signer
-    })
 
       
     const onSubmit = async () => {
@@ -21,13 +18,14 @@ export const Create = ({ pubkey }: Props) => {
         const newNote = new NDKEvent(ndk)
         newNote.kind = 1
         newNote.content = input,
+        console.log(newNote)
         await newNote.publish()
+        navigate('/home')
     }
 
     const handleChange = (e: React.SyntheticEvent) => {
         const target = e.target as HTMLInputElement
         setInput(target.value)
-        console.log(target.value)
     }
 
     return (
