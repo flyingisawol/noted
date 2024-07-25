@@ -85,12 +85,12 @@ ul {
   padding: 0px;
 }
 
-.nav-right {
+.nav-right li {
+  min-width: 100px;
 }
 
 .profile-pic {
   margin-right: 10px;
-  min-width: 100px;
   min-width: 45px;
   max-width: 45px;
   border-radius: 50%;
