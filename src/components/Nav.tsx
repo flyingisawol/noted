@@ -2,26 +2,9 @@ import { useNavigate, Link } from "react-router-dom"
 import { Login } from "./Login";
 import { Create } from "./Create";
 
-export const Nav = ({ userProfile, userNpub, userHexKey }: any) => {
+export const Nav = ({ userProfile, userNpub, userHexKey, onLogout }: any) => {
 
     const navigate = useNavigate()
-
-    const onClick = () => {
-        userProfile = {
-            about: '',
-            banner: '',
-            displayName: '',
-            image: '',
-            lud16: '',
-            name: '',
-            nip05: '',
-            reactions: false,
-            website: '',
-          }
-          userNpub = ''
-          userHexKey = ''
-        return navigate("/")
-    }
 
     const profilePic = userProfile?.image ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${userProfile?.pubkey ?? 'default'}`;
 
@@ -31,7 +14,7 @@ export const Nav = ({ userProfile, userNpub, userHexKey }: any) => {
                 <ul>
                     <li className="nav-left">
                         {userNpub.length > 0 && 
-                        <button onClick={onClick}
+                        <button onClick={onLogout}
                         >logout</button>}
                     </li>
                     <li className="nav-middle">
@@ -41,7 +24,9 @@ export const Nav = ({ userProfile, userNpub, userHexKey }: any) => {
                     </li>
                     <li className="nav-right">
                         <Link to="/profile">
+                        {userNpub.length > 0 &&
                             <img className="profile-pic" src={profilePic} alt="" />
+                        }
                         </Link> 
                     </li>
                 </ul>

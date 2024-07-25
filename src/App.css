@@ -10,6 +10,26 @@
   margin: 20px;
 }
 
+.login-button {
+  min-width: 250px;
+  max-width: 250px;
+  border-radius: 8px;
+  border: 1px solid #333300;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+.login-button:hover {
+  border-color: #646cff;
+}
+.login-button:focus,
+.login-button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
 /* LOGIN PAGE */
 
 .login-page {
@@ -21,9 +41,10 @@
 }
 
 .login-logo {
-  max-width: 250px;
+  max-width: 320px;
   border-radius: 25px;
-  padding: 10px;
+  margin: 10px;
+  border: #fff 4px solid;
 }
 
 /* NAVBAR */
@@ -137,7 +158,7 @@ form.input-form {
   margin: 10px 0 0px 0;
 }
 
-.submit-button, .login-button {
+.submit-button {
   min-width: 400px;
   max-width: 400px;
   border-radius: 8px;

@@ -61,14 +61,21 @@ function App() {
 
     const user = await signer.user();
     let profile = await user.fetchProfile()
-    
+
     setUserProfile(profile as UserProfile | any);
-    
+
     if (!!user.npub) {
       setUserNpub(user.npub);
       setUserHexKey(user.pubkey);
     }
     navigate("/home");
+  }
+
+  const handleLogout = () => {
+    setUserNpub('')
+    const ndk = null
+
+    return navigate("/")
   }
 
   useEffect(() => {
@@ -77,7 +84,7 @@ function App() {
 
   return (
     <>
-      <Nav userProfile={userProfile} userHexKey={userHexKey} userNpub={userNpub} />
+      <Nav userProfile={userProfile} userHexKey={userHexKey} userNpub={userNpub} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
         <Route path="/home" element={<Home ndk={ndk} defaultRelays={defaultRelays} userNpub={userNpub} userHexKey={userHexKey} />} />
