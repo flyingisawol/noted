@@ -5,7 +5,6 @@ import { insertEventIntoDescendingList } from '../utils/helperFunctions'
 
 import { Metadata } from "./Home";
 import { Profile } from './Profile'
-import { render } from "react-dom";
 
 interface Props {
     ndk: NDK;
@@ -87,11 +86,21 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
 
 
     const renderText = (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
         return content.split(/\n/).map((part, index) => (
             <span key={index}>
                 {part.split(/(\s+)/).map((subPart, subIndex) => {
                     if (imageRegex.test(subPart)) {
-                        return null; // Ignore images in the text content rendering
+                        return null
+                    } else if (urlRegex.test(subPart)) {
+                        return (
+                            <div>
+                            <a href={subPart} key={`${index}-${subIndex}`} target="_blank" rel="noopener noreferrer">
+                            {subPart}
+                        </a>
+                            </div>
+                        )
                     } else {
                         return <span key={`${index}-${subIndex}`}>{subPart}</span>;
                     }
@@ -116,12 +125,10 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     useEffect(() => {
         fetchFollowList()
         fetchProfiles()
-        // console.log('followList useEffect')
     }, [])
 
     useEffect(() => {
         fetchNotes()
-        // console.log('fetchNotes useEffect')
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
 
 
