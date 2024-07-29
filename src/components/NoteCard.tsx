@@ -86,7 +86,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
 
 
     const renderText = (content: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
 
         return content.split(/\n/).map((part, index) => (
             <span key={index}>
@@ -96,13 +96,18 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                     } else if (urlRegex.test(subPart)) {
                         return (
                             <div>
-                            <a href={subPart} key={`${index}-${subIndex}`} target="_blank" rel="noopener noreferrer">
-                            {subPart}
-                        </a>
+                                <a href={subPart} key={`${index}-${subIndex}`} target="_blank" rel="noopener noreferrer">
+                                    {subPart}
+                                </a>
                             </div>
                         )
+                    } else if (npubRegex.test(subPart)) {
+                        return (
+                            <span key={`${index}`}></span>
+                        )
+
                     } else {
-                        return <span key={`${index}-${subIndex}`}>{subPart}</span>;
+                        return <span key={`${index}-${subIndex}`}>{subPart}</span>
                     }
                 })}
             </span>
@@ -135,13 +140,32 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     return (
         <>
             {kind1Events.map((note, index) => {
+
                 return (
                     <div className="note" key={index}>
                         <div className="note-banner">
                             <Link to={profileRouteById}>
                                 <img src={metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`} className="profile-image" />
                             </Link>
-                            <h4 className="name">{metadata[note.pubkey]?.name}</h4>
+                            <div className="note-banner-low">
+                                <h4>
+
+                                <span className="name">{metadata[note.pubkey]?.name}</span>
+                                </h4>
+
+                                {note.tags && note.tags.length > 0 && (
+                                    <div className="tags">
+                                        {note.tags.map((tag, tagIndex) => {
+                                            if (tag[0] === "e") {
+                                                console.log('Rendering tag:', tag[1]);
+                                                return <span key={tagIndex} className="tag">{tag[1]}</span>;
+                                            }
+                                            return null;
+                                        })}
+
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="text-content">
                             {renderText(note.content)}

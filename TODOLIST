@@ -1,8 +1,17 @@
 // feed. to fix:
 ensure profileByID component links to npub of profile image clicked.
 render mentions correctly
+render note embeds
+
+when a note is a reply, show who the note is replying to, and link to the note.
+
 
 
 
 // App.tsx
 // problem: if i do not click login button and refresh the app, the pubkey is not stored in state.
+
+
+login:
+auto-load a feed on start, so no login initially required.
+create new keys
