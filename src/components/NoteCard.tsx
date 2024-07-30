@@ -11,12 +11,23 @@ interface Props {
     userHexKey: string;
 }
 
+interface Note {
+    content: string;
+    tags: string[][];
+}
+
+interface Tag {
+    0: string;
+    1: string;
+    [key: number]: string;
+}
+
 export const NoteCard = ({ ndk, userHexKey }: Props) => {
 
     const [kind1Events, setKind1Events] = useState<NDKEvent[]>([])
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
-    const [processedContent, setProcessedContent] = useState();
+    const [replyMention, setReplyMention] = useState<{ [key: string]: string }>({});
 
     const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
     const npubRegex = /npub:(\w+)/g;
@@ -75,19 +86,10 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             console.log('notice: ', notice)
         })
     }
-
-    // fetch username for mentions
-    const fetchUserName = async (npubMentioned: string) => {
-        console.log('npub mention: ', npubMentioned)
-        const user = ndk.getUser({ npub: npubMentioned })
-        await user.fetchProfile()
-        return `User${user}`
-    }
-
-
+    
     const renderText = (content: string) => {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
-
+        
         return content.split(/\n/).map((part, index) => (
             <span key={index}>
                 {part.split(/(\s+)/).map((subPart, subIndex) => {
@@ -105,7 +107,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                         return (
                             <span key={`${index}`}></span>
                         )
-
+                        
                     } else {
                         return <span key={`${index}-${subIndex}`}>{subPart}</span>
                     }
@@ -113,7 +115,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             </span>
         ));
     };
-
+    
     const renderImages = (content: string) => {
         const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif))/g;
         return content.split(imageRegex).map((part, index) => (
@@ -124,14 +126,32 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             </div>
         ));
     };
+    
+    const fetchUserName = async (npubMentioned: any) => {
+        const user = ndk.getUser({ npub: npubMentioned })
+        await user.fetchProfile()
+        setReplyMention(prevState => ({
+            ...prevState,
+            [npubMentioned]: user
+        }))
+        return 
+    }    
 
-
-
+    useEffect(() => {
+        kind1Events.forEach(note => {
+            note.tags.forEach(tag => {
+                if (tag[0] === "e" && !replyMention[tag[1]]) {
+                    fetchUserName(tag[1]);
+                }
+            });
+        });
+    }, [kind1Events]);
+    
     useEffect(() => {
         fetchFollowList()
         fetchProfiles()
     }, [])
-
+    
     useEffect(() => {
         fetchNotes()
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
@@ -147,18 +167,19 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                             <Link to={profileRouteById}>
                                 <img src={metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`} className="profile-image" />
                             </Link>
-                            <div className="note-banner-low">
+                            <div className="note-banner2">
                                 <h4>
-
-                                <span className="name">{metadata[note.pubkey]?.name}</span>
+                                    <span className="name">{metadata[note.pubkey]?.name}</span>
                                 </h4>
 
                                 {note.tags && note.tags.length > 0 && (
                                     <div className="tags">
                                         {note.tags.map((tag, tagIndex) => {
                                             if (tag[0] === "e") {
-                                                console.log('Rendering tag:', tag[1]);
-                                                return <span key={tagIndex} className="tag">{tag[1]}</span>;
+                                                return <span key={tagIndex} className="tag">
+                                                        {replyMention[tag[1]] || tag[1]}
+                                                    </span>;
+                                                     
                                             }
                                             return null;
                                         })}

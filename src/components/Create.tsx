@@ -17,10 +17,9 @@ export const Create = ({ ndk }: Props) => {
      
         const newNote = new NDKEvent(ndk)
         newNote.kind = 1
-        newNote.content = input,
+        newNote.content = input
         await newNote.publish()
-        // setInput('')
-        // navigate("/home")
+        setInput('')
     }
 
     const handleChange = (e: React.SyntheticEvent) => {
