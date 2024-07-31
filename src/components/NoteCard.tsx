@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import NDK, { NDKEvent, NDKFilter, NDKNip07Signer } from '@nostr-dev-kit/ndk'
+import NDK, { NDKEvent, NDKFilter, NDKNip07Signer, NDKUserProfile } from '@nostr-dev-kit/ndk'
 import { insertEventIntoDescendingList } from '../utils/helperFunctions'
 
 import { Metadata } from "./Home";
@@ -27,7 +27,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     const [kind1Events, setKind1Events] = useState<NDKEvent[]>([])
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
-    const [replyMention, setReplyMention] = useState<{ [key: string]: string }>({});
+    const [replyTo, setReplyTo] = useState({});
 
     const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
     const npubRegex = /npub:(\w+)/g;
@@ -61,7 +61,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             fetchProfiles()
         })
         sub.on('eose', () => {
-            // console.log('fetchEventsSub EOSE')
+            // console.log('EOSE')
         })
         sub.on('notice', (notice) => {
             console.log('notice: ', notice)
@@ -80,16 +80,16 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             }))
         })
         sub.on('eose', () => {
-            // console.log('profiles function EOSE') // end of shared events.
+            // console.log('EOSE') // end of shared events.
         })
         sub.on('notice', (notice) => {
             console.log('notice: ', notice)
         })
     }
-    
+
     const renderText = (content: string) => {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
-        
+
         return content.split(/\n/).map((part, index) => (
             <span key={index}>
                 {part.split(/(\s+)/).map((subPart, subIndex) => {
@@ -107,7 +107,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                         return (
                             <span key={`${index}`}></span>
                         )
-                        
+
                     } else {
                         return <span key={`${index}-${subIndex}`}>{subPart}</span>
                     }
@@ -115,7 +115,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             </span>
         ));
     };
-    
+
     const renderMedia = (content: string) => {
         const mediaRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g;
         return content.split(mediaRegex).map((part, index) => (
@@ -134,34 +134,49 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             </div>
         ));
     };
-    
-    const fetchUserName = async (npubMentioned) => {
-        // console.log('variable: ', npubMentioned)
-        const user = ndk.getUser({ pubkey: npubMentioned })
-        // console.log('user: ', user)
-        let mentionedProfile = await user.fetchProfile()
-        setReplyMention(mentionedProfile)
-    
-        return 
-    }    
+
+    const fetchEvent = async (noteId: string) => {
+        try {
+            const filter: NDKFilter = { ids: [noteId] };
+            const note = await ndk.fetchEvent(filter);
+
+            if (!note) {
+                console.warn(`No note found for ID: ${noteId}`);
+                return; // Exit if no note is found
+            }
+
+            const user = ndk.getUser({
+                pubkey: note.pubkey,
+            });
+
+            const replyingToProfile = await user.fetchProfile();
+            setReplyTo(prevState => ({
+                ...prevState,
+                [noteId]: replyingToProfile.name || replyingToProfile?.displayName || undefined
+            }));
+        } catch (error) {
+            console.error(`Error fetching event for note ID ${noteId}:`, error);
+            // Handle the error as needed
+        }
+    };
+
 
     useEffect(() => {
         kind1Events.forEach(note => {
             note.tags.forEach(tag => {
-                console.log(tag)
-                if (tag[0] === "e" && !replyMention[tag[1]]) {
-                    fetchUserName(tag[1]);
+                if (tag[0] === "e" && !replyTo[tag[1]]) {
+                    fetchEvent(tag[1]);
                 }
             });
         });
     }, [kind1Events]);
 
-    
+
     useEffect(() => {
         fetchFollowList()
         fetchProfiles()
     }, [])
-    
+
     useEffect(() => {
         fetchNotes()
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
@@ -170,7 +185,17 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     return (
         <>
             {kind1Events.map((note, index) => {
-
+                // Create a Set to collect unique usernames
+                const mentionedUsers = new Set();
+    
+                // Iterate over tags to find relevant ones
+                note.tags.forEach(tag => {
+                    if (tag[0] === "e") {
+                        // Assuming tag[1] contains the noteId or username
+                        mentionedUsers.add(tag[1]); // Adjust based on your data structure
+                    }
+                });
+    
                 return (
                     <div className="note" key={index}>
                         <div className="note-banner">
@@ -181,28 +206,22 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                                 <h4>
                                     <span className="name">{metadata[note.pubkey]?.name}</span>
                                 </h4>
-
-                                {/* {note.tags && note.tags.length > 0 && (
-                                    <div className="tags">
-                                        {note.tags.map((tag, tagIndex) => {
-                                            if (tag[0] === "e") {
-                                                return
-                                            }
-                                            return null;
-                                        })}
-
-                                    </div>
-                                )} */}
+    
+                                <div className="tags">
+                                    {mentionedUsers.size > 0 && (
+                                        <span className="tag">Replying to </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                         <div className="text-content">
                             {renderText(note.content)}
                             {renderMedia(note.content)}
                         </div>
-
                     </div>
-                )
+                );
             })}
         </>
-    )
+    );
+    
 }

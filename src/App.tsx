@@ -59,7 +59,6 @@ function App() {
   ndk.signer = signer
 
   const handleClick = async () => {
-
     const user = await signer.user();
     let profile = await user.fetchProfile()
 

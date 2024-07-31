@@ -264,8 +264,9 @@ img.note-image {
 
 
 .tag {
-  font-size: 10px;
+  font-size: 11px;
   margin-left: 5px;
+  color: grey;
 }
 
 /* PROFILE PAGE */
