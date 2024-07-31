@@ -116,36 +116,46 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         ));
     };
     
-    const renderImages = (content: string) => {
-        const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif))/g;
-        return content.split(imageRegex).map((part, index) => (
+    const renderMedia = (content: string) => {
+        const mediaRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g;
+        return content.split(mediaRegex).map((part, index) => (
             <div key={index}>
-                {part.match(imageRegex)?.map((subPart, subIndex) => (
-                    <img className="note-image" key={`${index}-${subIndex}`} src={subPart} alt="" />
-                ))}
+                {part.match(mediaRegex)?.map((subPart, subIndex) => {
+                    const isVideo = subPart.endsWith('.mp4');
+                    return isVideo ? (
+                        <video className="note-video" key={`${index}-${subIndex}`} controls>
+                            <source src={subPart} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    ) : (
+                        <img className="note-image" key={`${index}-${subIndex}`} src={subPart} alt="" />
+                    );
+                })}
             </div>
         ));
     };
     
-    const fetchUserName = async (npubMentioned: any) => {
-        const user = ndk.getUser({ npub: npubMentioned })
-        await user.fetchProfile()
-        setReplyMention(prevState => ({
-            ...prevState,
-            [npubMentioned]: user
-        }))
+    const fetchUserName = async (npubMentioned) => {
+        // console.log('variable: ', npubMentioned)
+        const user = ndk.getUser({ pubkey: npubMentioned })
+        // console.log('user: ', user)
+        let mentionedProfile = await user.fetchProfile()
+        setReplyMention(mentionedProfile)
+    
         return 
     }    
 
     useEffect(() => {
         kind1Events.forEach(note => {
             note.tags.forEach(tag => {
+                console.log(tag)
                 if (tag[0] === "e" && !replyMention[tag[1]]) {
                     fetchUserName(tag[1]);
                 }
             });
         });
     }, [kind1Events]);
+
     
     useEffect(() => {
         fetchFollowList()
@@ -172,25 +182,22 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                                     <span className="name">{metadata[note.pubkey]?.name}</span>
                                 </h4>
 
-                                {note.tags && note.tags.length > 0 && (
+                                {/* {note.tags && note.tags.length > 0 && (
                                     <div className="tags">
                                         {note.tags.map((tag, tagIndex) => {
                                             if (tag[0] === "e") {
-                                                return <span key={tagIndex} className="tag">
-                                                        {replyMention[tag[1]] || tag[1]}
-                                                    </span>;
-                                                     
+                                                return
                                             }
                                             return null;
                                         })}
 
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
                         <div className="text-content">
                             {renderText(note.content)}
-                            {renderImages(note.content)}
+                            {renderMedia(note.content)}
                         </div>
 
                     </div>
