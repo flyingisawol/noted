@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import NDK, { NDKEvent, NDKFilter, NDKNip07Signer, NDKUserProfile } from '@nostr-dev-kit/ndk'
+import { Link } from "react-router-dom";
 import { insertEventIntoDescendingList } from '../utils/helperFunctions'
 
 import { Metadata } from "./Home";
@@ -22,18 +22,18 @@ interface Tag {
     [key: number]: string;
 }
 
+
 export const NoteCard = ({ ndk, userHexKey }: Props) => {
 
     const [kind1Events, setKind1Events] = useState<NDKEvent[]>([])
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
-    const [replyTo, setReplyTo] = useState({});
+    const [replyTo, setReplyTo] = useState<Record<string, string>>({});
 
     const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
     const npubRegex = /npub:(\w+)/g;
 
     const profileRouteById = `/profile/${userHexKey}`
-
 
     const fetchFollowList = async () => {
         const filter: NDKFilter = {
@@ -148,23 +148,22 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                 pubkey: note.pubkey,
             });
 
-            const replyingToProfile = await user.fetchProfile();
+            const replyingTo: any = await user.fetchProfile();
             setReplyTo(prevState => ({
                 ...prevState,
-                [noteId]: replyingToProfile.name || replyingToProfile?.displayName || undefined
+                [noteId]: replyingTo.name || replyingTo?.displayName || undefined
             }));
-            console.log('replyTo: ', replyTo)
         } catch (error) {
             console.error(`Error fetching event for note ID ${noteId}:`, error);
             // Handle the error as needed
         }
     };
 
-
     useEffect(() => {
         kind1Events.forEach(note => {
             note.tags.forEach(tag => {
                 if (tag[0] === "e" && !replyTo[tag[1]]) {
+                    console.log(typeof replyTo)
                     fetchEvent(tag[1]);
                 }
             });
@@ -181,33 +180,30 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         fetchNotes()
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
 
-
     return (
         <>
             {kind1Events.map((note, index) => {
-                // Create a Set to collect unique user IDs
-                const mentionedUserIds = new Set();
+                let mentionedUserIds = new Set<string>();
+
     
-                // Iterate over tags to find relevant ones
                 note.tags.forEach(tag => {
                     if (tag[0] === "e") {
-                        // Assuming tag[1] contains the noteId
-                        mentionedUserIds.add(tag[1]); // Adjust based on your data structure
+                        mentionedUserIds.add(tag[1])
                     }
                 });
-    
-                // Get the first unique user ID from mentionedUserIds
-                const firstUserId = Array.from(mentionedUserIds)[0]; // Get the first ID
-                const firstUserName = firstUserId ? replyTo[firstUserId] : null; // Get the corresponding username
-    
-                return (
-                    <div className="note" key={index}>
+
+                const firstUserId = Array.from(mentionedUserIds)[0] 
+                const firstUserName = firstUserId ? replyTo[firstUserId] : null
+                
+                    
+                    return (
+                        <div className="note" key={index}>
                         <div className="note-banner">
                             <Link to={profileRouteById}>
                                 <img 
                                     src={metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`} 
                                     className="profile-image" 
-                                />
+                                    />
                             </Link>
                             <div className="note-banner2">
                                 <h4>
@@ -230,6 +226,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                     </div>
                 );
             })}
-        </>
-    );
+            </>
+        );
 }
