@@ -151,7 +151,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             const replyingTo: any = await user.fetchProfile();
             setReplyTo(prevState => ({
                 ...prevState,
-                [noteId]: replyingTo.name || replyingTo?.displayName || undefined
+                [noteId]: replyingTo.name || replyingTo?.displayName || undefined || null
             }));
         } catch (error) {
             console.error(`Error fetching event for note ID ${noteId}:`, error);
@@ -163,7 +163,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         kind1Events.forEach(note => {
             note.tags.forEach(tag => {
                 if (tag[0] === "e" && !replyTo[tag[1]]) {
-                    console.log(typeof replyTo)
                     fetchEvent(tag[1]);
                 }
             });
@@ -213,7 +212,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                                 <div className="tags">
                                     {firstUserName && (
                                         <span className="tag">
-                                            Replying to {firstUserName}
+                                            ↪ Replying to {firstUserName}
                                         </span>
                                     )}
                                 </div>
