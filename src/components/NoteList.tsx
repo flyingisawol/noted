@@ -16,7 +16,4 @@ export const NoteList = ({ ndk, userHexKey}: Props) => {
             <NoteCard ndk={ndk} userHexKey={userHexKey} />
         </div>
     )
-    // return <div className="feed">
-    //     <span className="loader"></span>
-    // </div>
 }

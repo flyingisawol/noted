@@ -5,7 +5,7 @@ render note embeds
 
 when a note is a reply, show who the note is replying to, and link to the note.
 
-
+video size not rendeirng correctly. 
 
 
 // App.tsx

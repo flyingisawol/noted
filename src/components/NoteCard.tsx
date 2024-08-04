@@ -22,16 +22,14 @@ interface Tag {
     [key: number]: string;
 }
 
-
 export const NoteCard = ({ ndk, userHexKey }: Props) => {
 
     const [kind1Events, setKind1Events] = useState<NDKEvent[]>([])
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
     const [replyTo, setReplyTo] = useState<Record<string, string>>({});
+    const [loading, setLoading] = useState(true);
 
-    const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
-    const npubRegex = /npub:(\w+)/g;
 
     const profileRouteById = `/profile/${userHexKey}`
 
@@ -47,7 +45,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
 
         if (followListKeys.length > 0 || followList.length > 0) {
             setFollowList(followListKeys)
-            fetchNotes()
+            // fetchNotes()
 
         } else {
             console.log('followListKeys.length: from the else statement', followListKeys.length)
@@ -72,49 +70,67 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         const pubkeysFromNotes = kind1Events.map((e) => e.pubkey)
         const sub = ndk.subscribe({ kinds: [0], authors: pubkeysFromNotes }, { closeOnEose: false })
 
-        sub.on('event', (event) => {
-            const metadata = JSON.parse(event.content) as Metadata
-            setMetadata((current) => ({
-                ...current,
-                [event.pubkey]: metadata,
-            }))
-        })
-        sub.on('eose', () => {
-            // console.log('EOSE') // end of shared events.
-        })
-        sub.on('notice', (notice) => {
-            console.log('notice: ', notice)
-        })
+        try {
+            sub.on('event', (event) => {
+                const metadata = JSON.parse(event.content) as Metadata
+                setMetadata((current) => ({
+                    ...current,
+                    [event.pubkey]: metadata,
+                }))
+            })
+
+            sub.on('eose', () => {
+                // console.log('EOSE') // end of shared events.
+            })
+            sub.on('notice', (notice) => {
+                console.log('notice: ', notice)
+            })
+        } catch (error) {
+            console.log('error fetching profile metadata: ', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const renderText = (content: string) => {
-        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const urlRegex = /(https?:\/\/[^\s]+)/g
+        const imageRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
+        const npubRegex = /npub:(\w+)/g
+        const nostrRegex = /nostr:[^\s]+/g
 
-        return content.split(/\n/).map((part, index) => (
-            <span key={index}>
-                {part.split(/(\s+)/).map((subPart, subIndex) => {
+        // Normalize line breaks and split text into paragraphs
+        const paragraphs = content
+            .replace(/\r\n|\r/g, '\n') // Normalize \r\n and \r to \n
+            .split('\n\n'); // Split by two newlines for paragraphs
+
+        return paragraphs.map((paragraph, index) => (
+            <div key={index} style={{ marginBottom: '1em' }}> {/* Optional styling for spacing */}
+                {paragraph.split(/(\s+)/).map((subPart, subIndex) => {
                     if (imageRegex.test(subPart)) {
                         return null
+                    } else if (nostrRegex.test(subPart)) {
+                        return (
+                            <a href={subPart} key={`${index}-${subIndex}`} target="_blank" rel="noopener noreferrer">
+                                {subPart}
+                            </a>
+                        )
                     } else if (urlRegex.test(subPart)) {
                         return (
-                            <div>
-                                <a href={subPart} key={`${index}-${subIndex}`} target="_blank" rel="noopener noreferrer">
-                                    {subPart}
-                                </a>
-                            </div>
+                            <a href={subPart} key={`${index}-${subIndex}`} target="_blank" rel="noopener noreferrer">
+                                {subPart}
+                            </a>
                         )
                     } else if (npubRegex.test(subPart)) {
                         return (
                             <span key={`${index}`}></span>
                         )
-
                     } else {
                         return <span key={`${index}-${subIndex}`}>{subPart}</span>
                     }
                 })}
-            </span>
-        ));
-    };
+            </div>
+        ))
+    }
 
     const renderMedia = (content: string) => {
         const mediaRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g;
@@ -155,7 +171,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             }));
         } catch (error) {
             console.error(`Error fetching event for note ID ${noteId}:`, error);
-            // Handle the error as needed
         }
     };
 
@@ -184,36 +199,44 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             {kind1Events.map((note, index) => {
                 let mentionedUserIds = new Set<string>();
 
-    
                 note.tags.forEach(tag => {
                     if (tag[0] === "e") {
                         mentionedUserIds.add(tag[1])
                     }
                 });
 
-                const firstUserId = Array.from(mentionedUserIds)[0] 
+                const firstUserId = Array.from(mentionedUserIds)[0]
                 const firstUserName = firstUserId ? replyTo[firstUserId] : null
-                
-                    
+
+                if (loading) {
                     return (
-                        <div className="note" key={index}>
+                        <div className="feed">
+                            <span className="loader"></span>
+                        </div>
+                    )
+                }
+
+                return (
+                    <div className="note" key={index}>
                         <div className="note-banner">
                             <Link to={profileRouteById}>
-                                <img 
-                                    src={metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`} 
-                                    className="profile-image" 
-                                    />
+                                <img
+                                    src={metadata[note.pubkey]?.picture ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${index}`}
+                                    className="profile-image"
+                                />
                             </Link>
                             <div className="note-banner2">
                                 <h4>
                                     <span className="name">{metadata[note.pubkey]?.name}</span>
                                 </h4>
-    
+
                                 <div className="tags">
                                     {firstUserName && (
-                                        <span className="tag">
-                                            ↪ Replying to {firstUserName}
-                                        </span>
+                                        <Link to="">
+                                            <span className="tag">
+                                                ↪ Replying to {firstUserName}
+                                            </span>
+                                        </Link>
                                     )}
                                 </div>
                             </div>
@@ -225,6 +248,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                     </div>
                 );
             })}
-            </>
-        );
+        </>
+    )
 }
