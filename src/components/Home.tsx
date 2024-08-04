@@ -3,7 +3,6 @@ import NDK, { NDKEvent, NDKFilter, NDKNip07Signer } from '@nostr-dev-kit/ndk'
 import { NoteList } from './NoteList'
 import { Create } from './Create'
 
-
 export interface Metadata {
     name?: string;
     about?: string;

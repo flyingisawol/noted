@@ -15,3 +15,6 @@ video size not rendeirng correctly.
 login:
 auto-load a feed on start, so no login initially required.
 create new keys
+
+
+move regex text function to helperFunctions component, so can be utilised all through the app by import.

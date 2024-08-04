@@ -30,9 +30,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     const [replyTo, setReplyTo] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(true);
 
-
-    const profileRouteById = `/profile/${userHexKey}`
-
     const fetchFollowList = async () => {
         const filter: NDKFilter = {
             kinds: [3], authors: [userHexKey]
@@ -46,14 +43,13 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         if (followListKeys.length > 0 || followList.length > 0) {
             setFollowList(followListKeys)
             // fetchNotes()
-
         } else {
             console.log('followListKeys.length: from the else statement', followListKeys.length)
         }
     }
 
     const fetchNotes = () => {
-        const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 30 }, { closeOnEose: false })
+        const sub = ndk.subscribe({ kinds: [1], authors: followList, limit: 100 }, { closeOnEose: false })
         sub.on('event', (event) => {
             setKind1Events((events) => insertEventIntoDescendingList(events, event))
             fetchProfiles()
@@ -78,7 +74,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                     [event.pubkey]: metadata,
                 }))
             })
-
             sub.on('eose', () => {
                 // console.log('EOSE') // end of shared events.
             })
@@ -101,7 +96,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         // Normalize line breaks and split text into paragraphs
         const paragraphs = content
             .replace(/\r\n|\r/g, '\n') // Normalize \r\n and \r to \n
-            .split('\n\n'); // Split by two newlines for paragraphs
+            .split('\n\n') // Split by two newlines for paragraphs
 
         return paragraphs.map((paragraph, index) => (
             <div key={index} style={{ marginBottom: '1em' }}> {/* Optional styling for spacing */}
@@ -133,7 +128,8 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     }
 
     const renderMedia = (content: string) => {
-        const mediaRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g;
+        const mediaRegex = /(https?:\/\/[^\s]+?\.(?:jpg|png|gif|mp4))/g
+
         return content.split(mediaRegex).map((part, index) => (
             <div key={index}>
                 {part.match(mediaRegex)?.map((subPart, subIndex) => {
@@ -145,11 +141,11 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                         </video>
                     ) : (
                         <img className="note-image" key={`${index}-${subIndex}`} src={subPart} alt="" />
-                    );
+                    )
                 })}
             </div>
-        ));
-    };
+        ))
+    }
 
     const fetchEvent = async (noteId: string) => {
         try {
@@ -167,12 +163,12 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             const replyingTo: any = await user.fetchProfile();
             setReplyTo(prevState => ({
                 ...prevState,
-                [noteId]: replyingTo.name || replyingTo?.displayName || undefined || null
+                [noteId]: replyingTo?.name || replyingTo?.displayName || undefined || null
             }));
         } catch (error) {
             console.error(`Error fetching event for note ID ${noteId}:`, error);
         }
-    };
+    }
 
     useEffect(() => {
         kind1Events.forEach(note => {
@@ -194,6 +190,14 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         fetchNotes()
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
 
+    // if (loading) {
+    //     return (
+    //         <div className="feed">
+    //             <span className="loader"></span>
+    //         </div>
+    //     )
+    // }
+
     return (
         <>
             {kind1Events.map((note, index) => {
@@ -204,17 +208,9 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                         mentionedUserIds.add(tag[1])
                     }
                 });
-
+                const profileRouteById = `/profile/${note.pubkey}`
                 const firstUserId = Array.from(mentionedUserIds)[0]
                 const firstUserName = firstUserId ? replyTo[firstUserId] : null
-
-                if (loading) {
-                    return (
-                        <div className="feed">
-                            <span className="loader"></span>
-                        </div>
-                    )
-                }
 
                 return (
                     <div className="note" key={index}>

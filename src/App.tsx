@@ -74,7 +74,6 @@ function App() {
   const handleLogout = () => {
     setUserNpub('')
     const ndk = null
-
     return navigate("/")
   }
 
@@ -89,7 +88,7 @@ function App() {
         <Route path="/" element={<Landing handleClick={handleClick} />} />
         <Route path="/home" element={<Home ndk={ndk} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} />} />
-        <Route path="/profile/:id" element={<ProfileById />} />
+        <Route path="/profile/:id" element={<ProfileById ndk={ndk} />} />
       </Routes>
     </>
   )

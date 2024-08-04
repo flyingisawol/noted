@@ -1,10 +1,8 @@
-import { useNavigate, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { Login } from "./Login";
 import { Create } from "./Create";
 
-export const Nav = ({ userProfile, userNpub, userHexKey, onLogout }: any) => {
-
-    const navigate = useNavigate()
+export const Nav = ({ userProfile, userNpub, onLogout }: any) => {
 
     const profilePic = userProfile?.image ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${userProfile?.pubkey ?? 'default'}`;
 
