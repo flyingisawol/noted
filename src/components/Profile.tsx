@@ -15,10 +15,12 @@ export const Profile = ({ userProfile }: any) => {
                     <img className="zap-icon" src="/assets/flash.png" alt={userProfile.lud16} />
                     </button>
                 </div>
-                <div className='profile-content2'>
+                <div className='profile-content'>
                     <h2 className='profile-name'>{userProfile.name}</h2>
                     <p>{userProfile.about}</p>
-                    <h3 className='profile-website'>{userProfile.website}</h3>
+                    <h3 className='profile-website'>
+                        <a href={userProfile.website}> {userProfile.website}</a>
+                        </h3>
 
                 <Link to="/home">
                     <button>back to feed</button>

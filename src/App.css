@@ -278,7 +278,8 @@ img.note-image {
 .profile-page {
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  justify-content: center;
+  align-items: center;
 }
 
 .banner {
@@ -291,7 +292,8 @@ img.note-image {
 .profile-header {
   display: flex;
   justify-content: center;
-  margin-left: 65px;
+  align-items: center;
+  margin-left: 60px;
 }
 
 .profile-page-image {
@@ -300,16 +302,10 @@ img.note-image {
   border: 6px white solid;
   object-fit: cover;
   border-radius: 50%;
-  min-width: 100px;
-  max-width: 100px;
-  min-height: 100px;
-  max-height: 100px;
-}
-
-.profile-content {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  min-width: 90px;
+  max-width: 90px;
+  min-height: 90px;
+  max-height: 90px;
 }
 
 .profile-name {
@@ -317,14 +313,18 @@ img.note-image {
   margin-left: 10px;
   color: #646cffaa;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 32px;
+  font-size: 28px;
 }
 
-.profile-content2 {
+.profile-content {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  max-width: 380px;
+  padding: 5px;
 }
+
 .zap-icon {
   margin-top: 0px;
   margin-left: 20px;

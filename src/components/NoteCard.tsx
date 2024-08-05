@@ -190,14 +190,6 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         fetchNotes()
     }, [ndk, kind1Events, fetchNotes, fetchProfiles])
 
-    // if (loading) {
-    //     return (
-    //         <div className="feed">
-    //             <span className="loader"></span>
-    //         </div>
-    //     )
-    // }
-
     return (
         <>
             {kind1Events.map((note, index) => {
