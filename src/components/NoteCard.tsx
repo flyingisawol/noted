@@ -153,12 +153,13 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
             const note = await ndk.fetchEvent(filter);
 
             if (!note) {
-                return; // Exit if no note is found
+                return
             }
 
             const user = ndk.getUser({
                 pubkey: note.pubkey,
             });
+            // console.log('user: ', user)
 
             const replyingTo: any = await user.fetchProfile();
             setReplyTo(prevState => ({
@@ -193,16 +194,18 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     return (
         <>
             {kind1Events.map((note, index) => {
-                let mentionedUserIds = new Set<string>();
+                let mentionedUserIds = new Set<string>()
 
                 note.tags.forEach(tag => {
                     if (tag[0] === "e") {
                         mentionedUserIds.add(tag[1])
                     }
-                });
+                })
+
                 const profileRouteById = `/profile/${note.pubkey}`
                 const firstUserId = Array.from(mentionedUserIds)[0]
                 const firstUserName = firstUserId ? replyTo[firstUserId] : null
+                // console.log(firstUserName)
 
                 return (
                     <div className="note" key={index}>
@@ -232,6 +235,12 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                         <div className="text-content">
                             {renderText(note.content)}
                             {renderMedia(note.content)}
+                        </div>
+                        <div className="note-footer">
+                        <button className="note-button"><span className="material-symbols-outlined">comment</span></button>
+                        <button className="note-button"><span className="material-symbols-outlined">repeat</span></button>
+                        <button className="note-button"><span className="material-symbols-outlined">bolt</span></button>
+                        <button className="note-button"><span className="material-symbols-outlined">bookmark</span></button>
                         </div>
                     </div>
                 );

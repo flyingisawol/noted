@@ -112,7 +112,7 @@ ul {
   justify-content: center;
   align-items: center;
   background-color: #000000;
-  min-width: 100%;
+  /* min-width: 100%; */
   padding: 5px 0 5px 0;
 }
 
@@ -273,6 +273,19 @@ img.note-image {
   max-width: 425px;
 }
 
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 5px;
+  padding: 0px 5px;
+  margin-bottom: 5px;
+  background-color: none;
+}
+
+button .note-button {
+  background-color: none !important;
+}
+
 /* PROFILE PAGE */
 
 .profile-page {
@@ -285,6 +298,7 @@ img.note-image {
 .banner {
   object-fit: cover;
   height: 180px;
+  min-width: 430px;
   align-content: center;
   border-bottom: 6px white solid;
 }
@@ -339,6 +353,11 @@ img.note-image {
 button.zap {
   background-color: transparent;
   padding: 0;
+}
+
+.heading {
+  padding: 10px;
+  font-weight: bold;
 }
 
 /* LOADING INDICATOR */

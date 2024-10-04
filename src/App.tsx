@@ -87,7 +87,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing handleClick={handleClick} />} />
         <Route path="/home" element={<Home ndk={ndk} userNpub={userNpub} userHexKey={userHexKey} />} />
-        <Route path="/profile" element={<Profile userProfile={userProfile} />} />
+        <Route path="/profile" element={<Profile userProfile={userProfile} ndk={ndk} userHexKey={userHexKey} />} />
         <Route path="/profile/:id" element={<ProfileById ndk={ndk} />} />
       </Routes>
     </>

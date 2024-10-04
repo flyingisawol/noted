@@ -2,6 +2,7 @@
 ensure profileByID component links to npub of profile image clicked.
 render mentions correctly
 render note embeds
+chronolog_timewarp
 
 note duplicates being rendered. most likey to do with "e" tag check.
 
