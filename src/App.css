@@ -276,14 +276,18 @@ img.note-image {
 .note-footer {
   display: flex;
   justify-content: space-between;
-  font-size: 5px;
+  font-size: 3px;
   padding: 0px 5px;
   margin-bottom: 5px;
-  background-color: none;
 }
 
-button .note-button {
-  background-color: none !important;
+.note-button span {
+  color: grey;
+  border-radius: 25px;
+}
+
+button, .note-button {
+  background-color: #000000;
 }
 
 /* PROFILE PAGE */
