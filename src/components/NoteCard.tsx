@@ -5,6 +5,7 @@ import { insertEventIntoDescendingList } from '../utils/helperFunctions'
 
 import { Metadata } from "./Home";
 import { Profile } from './Profile'
+import { Reply } from "./Reply"
 
 interface Props {
     ndk: NDK;
@@ -27,7 +28,8 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     const [kind1Events, setKind1Events] = useState<NDKEvent[]>([])
     const [followList, setFollowList] = useState<Array<string>>([])
     const [metadata, setMetadata] = useState<Record<string, Metadata>>({})
-    const [replyTo, setReplyTo] = useState<Record<string, string>>({});
+    const [replyTo, setReplyTo] = useState<Record<string, string>>({})
+    const [isReplyModalOpen, setIsReplyModalOpen] = useState(false)
     const [loading, setLoading] = useState(true);
 
     const fetchFollowList = async () => {
@@ -171,6 +173,14 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         }
     }
 
+    const handleOpenReplyModal = () => {
+        setIsReplyModalOpen(true)
+    }
+
+    const handleCloseReplyModal = () => {
+        setIsReplyModalOpen(false)
+    }
+
     useEffect(() => {
         kind1Events.forEach(note => {
             note.tags.forEach(tag => {
@@ -203,6 +213,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                 })
 
                 const profileRouteById = `/profile/${note.pubkey}`
+                const replyById = `/reply/${note.id}`
                 const firstUserId = Array.from(mentionedUserIds)[0]
                 const firstUserName = firstUserId ? replyTo[firstUserId] : null
                 // console.log(firstUserName)
@@ -237,10 +248,13 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                             {renderMedia(note.content)}
                         </div>
                         <div className="note-footer">
-                        <button className="note-button"><span className="material-symbols-outlined">comment</span></button>
-                        <button className="note-button"><span className="material-symbols-outlined">repeat</span></button>
-                        <button className="note-button"><span className="material-symbols-outlined">bolt</span></button>
-                        <button className="note-button"><span className="material-symbols-outlined">bookmark</span></button>
+                            <button className="note-button" onClick={handleOpenReplyModal}><span className="material-symbols-outlined">comment</span></button>
+                            {isReplyModalOpen && (
+                                <Reply onSubmit={handleCloseReplyModal} />
+                            )}
+                            <button className="note-button"><span className="material-symbols-outlined">repeat</span></button>
+                            <button className="note-button"><span className="material-symbols-outlined">bolt</span></button>
+                            <button className="note-button"><span className="material-symbols-outlined">bookmark</span></button>
                         </div>
                     </div>
                 );

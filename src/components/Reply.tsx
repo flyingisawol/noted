@@ -6,7 +6,7 @@ interface Props {
     ndk: NDK;
 }
 
-export const Create = ({ ndk }: Props) => {
+export const Reply = ({ ndk }: Props) => {
 
     const [input, setInput] = useState<string>("")
 
@@ -19,7 +19,7 @@ export const Create = ({ ndk }: Props) => {
         newNote.kind = 1
         newNote.content = input
         await newNote.publish()
-        setInput('')    
+        setInput('')
     }
 
     const handleChange = (e: React.SyntheticEvent) => {
@@ -28,10 +28,10 @@ export const Create = ({ ndk }: Props) => {
     }
 
     return (
-        <div className='write-stuff'>
-            <form className="input-form" onSubmit={onSubmit} >
-                <textarea className="input-note" placeholder="write stuff..." value={input} onChange={handleChange}></textarea>
-                <button className="submit-button">submit</button>
+        <div className='reply-card'>
+            <form className="reply-form" onSubmit={onSubmit} >
+                <textarea className="reply-input" placeholder="..." value={input} onChange={handleChange}></textarea>
+                <button className="reply-submit">submit</button>
             </form>
         </div>
     )

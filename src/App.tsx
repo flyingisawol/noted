@@ -8,6 +8,7 @@ import { Nav } from "./components/Nav"
 import { Landing } from "./components/Landing"
 import { Profile } from "./components/Profile"
 import { ProfileById } from './components/ProfileById'
+import { Reply } from './components/Reply'
 
 import './App.css'
 
@@ -89,6 +90,8 @@ function App() {
         <Route path="/home" element={<Home ndk={ndk} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} ndk={ndk} userHexKey={userHexKey} />} />
         <Route path="/profile/:id" element={<ProfileById ndk={ndk} />} />
+        <Route path="/reply/:id" element={<Reply ndk={ndk} />} />
+        
       </Routes>
     </>
   )

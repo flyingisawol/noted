@@ -13,7 +13,7 @@ export const Profile = ({ userProfile, ndk, userHexKey }: any) => {
         const sub = ndk.subscribe({ kinds: [1], authors: [userHexKey], limit: 25 }, { closeOnEose: false })
         sub.on('event', (event: NDKEvent) => {
             setProfileNotes((events) => insertEventIntoDescendingList(events, event))
-            console.log('profile notes = ', profileNotes)
+            // console.log('profile notes = ', profileNotes)
         })
         sub.on('eose', () => {
             // console.log('EOSE')
