@@ -250,7 +250,7 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                         <div className="note-footer">
                             <button className="note-button" onClick={handleOpenReplyModal}><span className="material-symbols-outlined">comment</span></button>
                             {isReplyModalOpen && (
-                                <Reply onSubmit={handleCloseReplyModal} />
+                                <Reply onClose={handleCloseReplyModal} />
                             )}
                             <button className="note-button"><span className="material-symbols-outlined">repeat</span></button>
                             <button className="note-button"><span className="material-symbols-outlined">bolt</span></button>
