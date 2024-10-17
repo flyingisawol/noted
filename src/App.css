@@ -179,9 +179,9 @@ form.input-form {
 .reply-card {
   position: fixed;
   bottom: 0;
-  left: .5;
-  right: .5;
-  width: 99%;
+  left: 0;
+  right: 0;
+  width: 99.6%;
   min-height: 25%;
   max-height: 25%;
   background-color: #202020;
@@ -222,8 +222,8 @@ textarea {
   color: white;
   font-size: 16px;
   margin: 0 auto;
-  min-width: 370px;
-  max-width: 370px;
+  min-width: 90%;
+  max-width: 90%;
 }
 
 .reply-submit {
