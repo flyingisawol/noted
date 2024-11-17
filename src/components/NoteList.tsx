@@ -12,7 +12,7 @@ interface Props {
 export const NoteList = ({ ndk, userHexKey}: Props) => {
 
     return (
-        <div className="feed" >
+        <div className="feed">
             <NoteCard ndk={ndk} userHexKey={userHexKey} />
         </div>
     )

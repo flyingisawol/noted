@@ -31,6 +31,9 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
     const [replyTo, setReplyTo] = useState<Record<string, string>>({})
     const [isReplyModalOpen, setIsReplyModalOpen] = useState(false)
     const [loading, setLoading] = useState(true);
+    const [isActive, setIsActive] = useState(false)
+    const [replyNoteId, setReplyNoteId] = useState(null)
+
 
     const fetchFollowList = async () => {
         const filter: NDKFilter = {
@@ -173,12 +176,17 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
         }
     }
 
-    const handleOpenReplyModal = () => {
+    const handleOpenReplyModal = (id) => {
+        setReplyNoteId(id)
         setIsReplyModalOpen(true)
     }
 
     const handleCloseReplyModal = () => {
         setIsReplyModalOpen(false)
+    }
+
+    const toggleBlur = () => {
+        setIsActive(!isActive)
     }
 
     useEffect(() => {
@@ -216,10 +224,9 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                 const replyById = `/reply/${note.id}`
                 const firstUserId = Array.from(mentionedUserIds)[0]
                 const firstUserName = firstUserId ? replyTo[firstUserId] : null
-                // console.log(firstUserName)
 
                 return (
-                    <div className="note" key={index}>
+                    <div className={`note ${isActive ? 'active' : ''}`} key={index}>
                         <div className="note-banner">
                             <Link to={profileRouteById}>
                                 <img
@@ -248,10 +255,13 @@ export const NoteCard = ({ ndk, userHexKey }: Props) => {
                             {renderMedia(note.content)}
                         </div>
                         <div className="note-footer">
-                            <button className="note-button" onClick={handleOpenReplyModal}><span className="material-symbols-outlined">comment</span></button>
-                            {isReplyModalOpen && (
-                                <Reply onClose={handleCloseReplyModal} />
+                            {!isActive && (
+                                <button className="note-button" onClick={() => handleOpenReplyModal(note.id)}><span className="material-symbols-outlined">comment</span></button>
                             )}
+                            {isReplyModalOpen && (
+                                <Reply onClose={handleCloseReplyModal} isActive={isActive} noteId={replyNoteId}/>
+                            )}
+
                             <button className="note-button"><span className="material-symbols-outlined">repeat</span></button>
                             <button className="note-button"><span className="material-symbols-outlined">bolt</span></button>
                             <button className="note-button"><span className="material-symbols-outlined">bookmark</span></button>

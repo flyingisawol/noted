@@ -39,6 +39,7 @@ function App() {
   })
   const [userNpub, setUserNpub] = useState<string>('')
   const [userHexKey, setUserHexKey] = useState<string>('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const navigate = useNavigate()
 
@@ -69,7 +70,8 @@ function App() {
       setUserNpub(user.npub);
       setUserHexKey(user.pubkey);
     }
-    navigate("/home");
+    navigate("/home")
+    setIsLoggedIn(true)
   }
 
   const handleLogout = () => {
@@ -84,9 +86,9 @@ function App() {
 
   return (
     <>
-      <Nav userProfile={userProfile} userHexKey={userHexKey} userNpub={userNpub} onLogout={handleLogout} />
+      <Nav userProfile={userProfile} handleSignIn={handleClick} isLoggedIn={isLoggedIn} userHexKey={userHexKey} userNpub={userNpub} onLogout={handleLogout} />
       <Routes>
-        <Route path="/" element={<Landing handleClick={handleClick} />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home ndk={ndk} userNpub={userNpub} userHexKey={userHexKey} />} />
         <Route path="/profile" element={<Profile userProfile={userProfile} ndk={ndk} userHexKey={userHexKey} />} />
         <Route path="/profile/:id" element={<ProfileById ndk={ndk} />} />

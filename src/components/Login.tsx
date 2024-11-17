@@ -1,14 +1,9 @@
 
-export const Login = ({ handleClick }: any) => {
+export const Login = () => {
 
     return (
         <div className="login-page">
             <img className="login-logo" src="/assets/noteBubble.png" alt="noted speech bubble" />
-
-            <button
-                className="login-button"
-                onClick={handleClick}
-            >Login with signer</button>
         </div>
     )
 }

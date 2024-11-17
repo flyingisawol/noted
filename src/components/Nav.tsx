@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { Link } from "react-router-dom"
 import { Login } from "./Login";
 import { Create } from "./Create";
 
-export const Nav = ({ userProfile, userNpub, onLogout }: any) => {
-
+export const Nav = ({ userProfile, userNpub, onLogout, handleSignIn, isLoggedIn }: any) => {
+    
+    
     const profilePic = userProfile?.image ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${userProfile?.pubkey ?? 'default'}`;
-
+    console.log(isLoggedIn)
     return (
         <>
             <nav className="nav">
@@ -21,11 +23,15 @@ export const Nav = ({ userProfile, userNpub, onLogout }: any) => {
                         }
                     </li>
                     <li className="nav-right">
+                        {isLoggedIn ? 
                         <Link to="/profile">
                         {userNpub.length > 0 &&
                             <img className="profile-pic" src={profilePic} alt="" />
                         }
                         </Link> 
+                        : 
+                        <button onClick={handleSignIn}>sign in</button>
+                        }
                     </li>
                 </ul>
             </nav>
