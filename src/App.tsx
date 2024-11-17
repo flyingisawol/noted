@@ -77,6 +77,7 @@ function App() {
   const handleLogout = () => {
     setUserNpub('')
     const ndk = null
+    setIsLoggedIn(false)
     return navigate("/")
   }
 

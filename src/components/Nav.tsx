@@ -5,9 +5,8 @@ import { Create } from "./Create";
 
 export const Nav = ({ userProfile, userNpub, onLogout, handleSignIn, isLoggedIn }: any) => {
     
-    
     const profilePic = userProfile?.image ?? `https://api.dicebear.com/8.x/bottts/svg?seed=${userProfile?.pubkey ?? 'default'}`;
-    console.log(isLoggedIn)
+    
     return (
         <>
             <nav className="nav">
